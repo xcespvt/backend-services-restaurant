@@ -1,0 +1,1415 @@
+{
+  "info": {
+    "_postman_id": "e5a7b8c9-d0e1-f2a3-b4c5-d6e7f8a9b0c1",
+    "name": "XCES Restaurant Management System API",
+    "description": "A comprehensive collection for testing the XCES Restaurant Management System API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Restaurant Name\",\n  \"email\": \"owner@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"1234567890\",\n  \"address\": \"123 Main St, City, Country\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new restaurant owner account"
+          },
+          "response": []
+        },
+        {
+          "name": "Owner Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {\n    var jsonData = pm.response.json();\n    if (jsonData.success && jsonData.data && jsonData.data.token) {\n        pm.environment.set(\"token\", jsonData.data.token);\n        console.log(\"Token saved to environment\");\n    }\n}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{owner_email}}\",\n  \"password\": \"{{owner_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login as restaurant owner"
+          },
+          "response": []
+        },
+        {
+          "name": "Employee Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {\n    var jsonData = pm.response.json();\n    if (jsonData.success && jsonData.data && jsonData.data.token) {\n        pm.environment.set(\"token\", jsonData.data.token);\n        console.log(\"Token saved to environment\");\n    }\n}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{employee_email}}\",\n  \"password\": \"{{employee_password}}\",\n  \"branchId\": \"{{branch_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/employee/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "employee", "login"]
+            },
+            "description": "Login as branch employee"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints for registration and login"
+    },
+    {
+      "name": "Branches",
+      "item": [
+        {
+          "name": "Get All Branches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {\n    var jsonData = pm.response.json();\n    if (jsonData.success && jsonData.data && jsonData.data.length > 0) {\n        pm.environment.set(\"branch_id\", jsonData.data[0].id);\n        console.log(\"Branch ID saved to environment: \" + jsonData.data[0].id);\n    }\n}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/branches",
+              "host": ["{{base_url}}"],
+              "path": ["branches"]
+            },
+            "description": "Get all branches for the restaurant"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Branch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Branch\",\n  \"address\": \"789 Side St, City\",\n  \"phone\": \"5556667777\",\n  \"openingHours\": {\n    \"monday\": { \"open\": \"09:00\", \"close\": \"22:00\" },\n    \"tuesday\": { \"open\": \"09:00\", \"close\": \"22:00\" },\n    \"wednesday\": { \"open\": \"09:00\", \"close\": \"22:00\" },\n    \"thursday\": { \"open\": \"09:00\", \"close\": \"22:00\" },\n    \"friday\": { \"open\": \"09:00\", \"close\": \"23:00\" },\n    \"saturday\": { \"open\": \"10:00\", \"close\": \"23:00\" },\n    \"sunday\": { \"open\": \"10:00\", \"close\": \"22:00\" }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/branches",
+              "host": ["{{base_url}}"],
+              "path": ["branches"]
+            },
+            "description": "Add a new branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Branch",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Branch Name\",\n  \"address\": \"Updated Address\",\n  \"phone\": \"9998887777\",\n  \"openingHours\": {\n    \"monday\": { \"open\": \"08:00\", \"close\": \"21:00\" },\n    \"tuesday\": { \"open\": \"08:00\", \"close\": \"21:00\" },\n    \"wednesday\": { \"open\": \"08:00\", \"close\": \"21:00\" },\n    \"thursday\": { \"open\": \"08:00\", \"close\": \"21:00\" },\n    \"friday\": { \"open\": \"08:00\", \"close\": \"22:00\" },\n    \"saturday\": { \"open\": \"09:00\", \"close\": \"22:00\" },\n    \"sunday\": { \"open\": \"09:00\", \"close\": \"21:00\" }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/branches/{{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["branches", "{{branch_id}}"]
+            },
+            "description": "Update an existing branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Branch",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/branches/{{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["branches", "{{branch_id}}"]
+            },
+            "description": "Delete a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Branch Online Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isOnline\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/branches/{{branch_id}}/toggle-online",
+              "host": ["{{base_url}}"],
+              "path": ["branches", "{{branch_id}}", "toggle-online"]
+            },
+            "description": "Toggle branch online status"
+          },
+          "response": []
+        }
+      ],
+      "description": "Branch management endpoints"
+    },
+    {
+      "name": "Menu",
+      "item": [
+        {
+          "name": "Get Menu Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/menu/items?branchId={{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["menu", "items"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "category_id",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get all menu items for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Menu Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "New Dish",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Description of the new dish",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "14.99",
+                  "type": "text"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "category_id",
+                  "type": "text"
+                },
+                {
+                  "key": "preparationTime",
+                  "value": "20",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "/path/to/image.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/menu/items",
+              "host": ["{{base_url}}"],
+              "path": ["menu", "items"]
+            },
+            "description": "Add a new menu item"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Menu Item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "Updated Dish Name",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Updated description",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "16.99",
+                  "type": "text"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "category_id",
+                  "type": "text"
+                },
+                {
+                  "key": "preparationTime",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "/path/to/image.jpg",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/menu/items/{{item_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["menu", "items", "{{item_id}}"]
+            },
+            "description": "Update an existing menu item"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Menu Item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/menu/items/{{item_id}}?branchId={{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["menu", "items", "{{item_id}}"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                }
+              ]
+            },
+            "description": "Delete a menu item"
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Menu Item Availability",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"isAvailable\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/menu/items/{{item_id}}/toggle-availability",
+              "host": ["{{base_url}}"],
+              "path": ["menu", "items", "{{item_id}}", "toggle-availability"]
+            },
+            "description": "Toggle menu item availability"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Menu Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"name\": \"New Category\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/menu/categories",
+              "host": ["{{base_url}}"],
+              "path": ["menu", "categories"]
+            },
+            "description": "Add a new menu category"
+          },
+          "response": []
+        }
+      ],
+      "description": "Menu management endpoints"
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Get All Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders?branchId={{branch_id}}&status=pending",
+              "host": ["{{base_url}}"],
+              "path": ["orders"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "pending, preparing, ready, completed, cancelled"
+                }
+              ]
+            },
+            "description": "Get all orders for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}?branchId={{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                }
+              ]
+            },
+            "description": "Get details of a specific order"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"status\": \"preparing\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}", "status"]
+            },
+            "description": "Update the status of an order"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Preparation Time",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"extraMinutes\": 15\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}/prep-time",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}", "prep-time"]
+            },
+            "description": "Update the preparation time of an order"
+          },
+          "response": []
+        },
+        {
+          "name": "Accept New Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"prepTime\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}/accept",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}", "accept"]
+            },
+            "description": "Accept a new order"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Offline Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"items\": [\n    {\n      \"id\": \"item_id_1\",\n      \"quantity\": 2,\n      \"specialInstructions\": \"Extra cheese\"\n    },\n    {\n      \"id\": \"item_id_2\",\n      \"quantity\": 1,\n      \"specialInstructions\": \"Dressing on the side\"\n    }\n  ],\n  \"customerName\": \"Walk-in Customer\",\n  \"customerPhone\": \"1234567890\",\n  \"type\": \"dine-in\",\n  \"paymentMethod\": \"cash\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/offline",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "offline"]
+            },
+            "description": "Create an offline order"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders/history?branchId={{branch_id}}&startDate=2023-06-01&endDate=2023-06-15&type=delivery",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "history"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2023-06-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2023-06-15"
+                },
+                {
+                  "key": "type",
+                  "value": "delivery",
+                  "description": "delivery, pickup, dine-in"
+                }
+              ]
+            },
+            "description": "Get order history for a branch"
+          },
+          "response": []
+        }
+      ],
+      "description": "Order management endpoints"
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Get All Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/bookings?branchId={{branch_id}}&date=2023-06-20&status=confirmed",
+              "host": ["{{base_url}}"],
+              "path": ["bookings"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "date",
+                  "value": "2023-06-20"
+                },
+                {
+                  "key": "status",
+                  "value": "confirmed",
+                  "description": "pending, confirmed, completed, cancelled"
+                }
+              ]
+            },
+            "description": "Get all bookings for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"name\": \"New Booking\",\n  \"phone\": \"5556667777\",\n  \"date\": \"2023-06-25\",\n  \"time\": \"18:30\",\n  \"partySize\": 6,\n  \"tables\": [\"table_id_4\", \"table_id_5\"],\n  \"fee\": 20.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["bookings"]
+            },
+            "description": "Add a new booking"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Booking Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/bookings/{{booking_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["bookings", "{{booking_id}}", "status"]
+            },
+            "description": "Update the status of a booking"
+          },
+          "response": []
+        }
+      ],
+      "description": "Booking management endpoints"
+    },
+    {
+      "name": "Tables",
+      "item": [
+        {
+          "name": "Get All Tables",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tables?branchId={{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tables"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                }
+              ]
+            },
+            "description": "Get all tables for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Table",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"name\": \"Table 4\",\n  \"capacity\": 8\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tables",
+              "host": ["{{base_url}}"],
+              "path": ["tables"]
+            },
+            "description": "Add a new table"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Table",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"name\": \"Updated Table Name\",\n  \"capacity\": 10,\n  \"status\": \"available\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tables/{{table_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tables", "{{table_id}}"]
+            },
+            "description": "Update an existing table"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Table",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tables/{{table_id}}?branchId={{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tables", "{{table_id}}"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                }
+              ]
+            },
+            "description": "Delete a table"
+          },
+          "response": []
+        }
+      ],
+      "description": "Table management endpoints"
+    },
+    {
+      "name": "Feedback",
+      "item": [
+        {
+          "name": "Get All Feedback",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/feedback?branchId={{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["feedback"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                }
+              ]
+            },
+            "description": "Get all feedback for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Reply to Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"reply\": \"Thank you for your feedback. We apologize for the delay and will work to improve our delivery times.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/feedback/{{feedback_id}}/reply",
+              "host": ["{{base_url}}"],
+              "path": ["feedback", "{{feedback_id}}", "reply"]
+            },
+            "description": "Add a reply to feedback"
+          },
+          "response": []
+        }
+      ],
+      "description": "Feedback management endpoints"
+    },
+    {
+      "name": "Refunds",
+      "item": [
+        {
+          "name": "Get All Refund Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/refunds?branchId={{branch_id}}&status=pending",
+              "host": ["{{base_url}}"],
+              "path": ["refunds"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "pending, approved, rejected"
+                }
+              ]
+            },
+            "description": "Get all refund requests for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Handle Refund Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"status\": \"approved\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/refunds/{{refund_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["refunds", "{{refund_id}}", "status"]
+            },
+            "description": "Handle a refund request"
+          },
+          "response": []
+        }
+      ],
+      "description": "Refund management endpoints"
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Get Restaurant Settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/settings?branchId={{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["settings"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                }
+              ]
+            },
+            "description": "Get restaurant settings for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Service Settings",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"setting\": \"delivery.fee\",\n  \"value\": 6.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/settings/services",
+              "host": ["{{base_url}}"],
+              "path": ["settings", "services"]
+            },
+            "description": "Update service settings"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Owner Info",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"ownerInfo\": {\n    \"name\": \"Updated Owner Name\",\n    \"email\": \"updated@example.com\",\n    \"phone\": \"9876543210\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/settings/owner-info",
+              "host": ["{{base_url}}"],
+              "path": ["settings", "owner-info"]
+            },
+            "description": "Update owner information"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Notification Settings",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"setting\": \"push\",\n  \"value\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/settings/notifications",
+              "host": ["{{base_url}}"],
+              "path": ["settings", "notifications"]
+            },
+            "description": "Update notification settings"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Facilities",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"facilities\": [\"Parking\", \"Outdoor Seating\", \"Wheelchair Accessible\", \"WiFi\", \"Live Music\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/settings/facilities",
+              "host": ["{{base_url}}"],
+              "path": ["settings", "facilities"]
+            },
+            "description": "Update facilities"
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Restaurant Online Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"isOnline\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/settings/toggle-online",
+              "host": ["{{base_url}}"],
+              "path": ["settings", "toggle-online"]
+            },
+            "description": "Toggle restaurant online status"
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Restaurant Busy Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": \"{{branch_id}}\",\n  \"isBusy\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/settings/toggle-busy",
+              "host": ["{{base_url}}"],
+              "path": ["settings", "toggle-busy"]
+            },
+            "description": "Toggle restaurant busy status"
+          },
+          "response": []
+        }
+      ],
+      "description": "Restaurant settings endpoints"
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get Dashboard Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/dashboard?branchId={{branch_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "dashboard"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                }
+              ]
+            },
+            "description": "Get dashboard analytics for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Earnings Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/earnings?branchId={{branch_id}}&period=weekly",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "earnings"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "period",
+                  "value": "weekly",
+                  "description": "daily, weekly, monthly, yearly"
+                }
+              ]
+            },
+            "description": "Get earnings analytics for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/orders?branchId={{branch_id}}&period=weekly",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "orders"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "period",
+                  "value": "weekly",
+                  "description": "daily, weekly, monthly, yearly"
+                }
+              ]
+            },
+            "description": "Get order analytics for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/customers?branchId={{branch_id}}&period=monthly",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "customers"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "period",
+                  "value": "monthly",
+                  "description": "daily, weekly, monthly, yearly"
+                }
+              ]
+            },
+            "description": "Get customer analytics for a branch"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Feedback Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/analytics/feedback?branchId={{branch_id}}&period=monthly",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "feedback"],
+              "query": [
+                {
+                  "key": "branchId",
+                  "value": "{{branch_id}}"
+                },
+                {
+                  "key": "period",
+                  "value": "monthly",
+                  "description": "daily, weekly, monthly, yearly"
+                }
+              ]
+            },
+            "description": "Get feedback analytics for a branch"
+          },
+          "response": []
+        }
+      ],
+      "description": "Analytics endpoints"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "branch_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "item_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "order_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "booking_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "table_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "feedback_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refund_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
