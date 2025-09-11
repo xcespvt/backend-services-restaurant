@@ -35,7 +35,7 @@ const PricingOptionSchema = new Schema({
 }, { _id: false });
 
 const MenuItemSchema = new Schema({
-    restaurantId: { type: String , index: true},
+    restaurantId: { type: String , index: true,unique: false},
     name: {
         type: String,
         trim: true,
@@ -47,6 +47,13 @@ const MenuItemSchema = new Schema({
     type: {
         type: String,
         enum: ['item', 'beverage', 'combo', 'sauce'],
+      
+    },
+    category: {
+        type: String,
+    },
+    images: {
+        type: [String],
       
     },
     available: {

@@ -21,11 +21,13 @@ const Schema = mongoose.Schema;
 
 
 const restaurantSchema = new Schema({
+    branchId: { 
+        type: String,
+        index: true   // optional, but makes intent clearer
+    },
     restaurantId: { 
         type: String,
-        unique: true, // creates a unique index automatically
         index: true   // optional, but makes intent clearer
-
     },
     name: {
         type: String,

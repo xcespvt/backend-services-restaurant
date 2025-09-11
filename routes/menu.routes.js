@@ -6,7 +6,7 @@ import menuController from "../controllers/menu.controller.js";
 const router = express.Router();
 
 // Get all menu items for a branch
-router.get("/:branchId", menuController.getMenuItems);
+router.get("/getitems/:branchId", menuController.getMenuItems);
 
 // Add a new menu item
 router.post("/:branchId", menuController.addMenuItem);

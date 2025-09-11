@@ -1,12 +1,14 @@
 "use strict";
+import MenuService from "../services/menuService.js";
+const menuService = new MenuService("MenuItem");
 
-import menuService from "../services/menuService.js";
+// Rest of your controller code...
 
 const menuController = {
   getMenuItems: async (req, res) => {
     try {
       const { branchId } = req.params;
-      
+ 
       if (!branchId) {
         return res.status(400).json({
           success: false,
@@ -14,7 +16,7 @@ const menuController = {
         });
       }
       
-      const menu = await menuService.getMenuItems(branchId);
+      const menu = await menuService.getData({restaurantId:branchId},{_id:0});
       
       return res.status(200).json({
         success: true,
@@ -52,7 +54,7 @@ const menuController = {
         });
       }
       
-      const menuItem = await menuService.addMenuItem(branchId, itemData);
+      const menuItem = await menuService.addData({branchId, itemData});
       
       return res.status(201).json({
         success: true,
@@ -82,7 +84,7 @@ const menuController = {
         });
       }
       
-      const menuItem = await menuService.updateMenuItem(branchId, itemId, itemData);
+      const menuItem = await menuService.updateData({branchId, itemId, itemData});
       
       return res.status(200).json({
         success: true,
@@ -118,7 +120,7 @@ const menuController = {
         });
       }
       
-      await menuService.deleteMenuItem(branchId, itemId);
+      await menuService.deleteData({branchId, itemId});
       
       return res.status(200).json({
         success: true,

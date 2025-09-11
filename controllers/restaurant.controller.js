@@ -55,7 +55,7 @@ const restaurantController = {
     
     addMenuItem: async (req, res) => {
         try {
-            const { restaurantId, name, description, type, available, pricing_unit, pricing_options } = req.body;
+            const { restaurantId, name, description, type, available, category, images, pricing_unit, pricing_options } = req.body;
 
             let data = await MENU_SERVICE.addData({
                 restaurantId,
@@ -63,6 +63,8 @@ const restaurantController = {
                 description,
                 type,
                 available,
+                category,
+                images,
                 pricing_unit,
                 pricing_options
             });
