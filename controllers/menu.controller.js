@@ -8,7 +8,10 @@ const menuController = {
   getMenuItems: async (req, res) => {
     try {
       const { branchId } = req.params;
- 
+      const page = parseInt(req.query.page) || 1; // Default to page 1
+      const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+      const skip = (page - 1) * limit;
+
       if (!branchId) {
         return res.status(400).json({
           success: false,
@@ -16,12 +19,30 @@ const menuController = {
         });
       }
       
-      const menu = await menuService.getData({restaurantId:branchId},{_id:0});
+      // Get total count for pagination metadata
+      const totalItems = await menuService.getCount({ restaurantId: branchId });
+      const totalPages = Math.ceil(totalItems / limit);
+      
+      const menu = await menuService.getData(
+        { restaurantId: branchId },
+        { _id: 0 },
+        {}, // sort
+        skip,
+        limit
+      );
       
       return res.status(200).json({
         success: true,
         message: "Menu items retrieved successfully",
-        data: menu
+        data: menu,
+        pagination: {
+          currentPage: page,
+          itemsPerPage: limit,
+          totalItems,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1
+        }
       });
     } catch (error) {
       console.error(error.message);

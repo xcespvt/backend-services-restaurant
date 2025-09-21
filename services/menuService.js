@@ -1,5 +1,8 @@
 "use strict";
 
+import MenuSchema from "../models/menuSchema.js";
+import CategoryModel from "../models/categoryModel.js";
+
 class MenuService {
     constructor(modelName) {
         this.modelName = modelName;
@@ -7,10 +10,10 @@ class MenuService {
         
         switch (modelName) {
             case "MenuItem":
-                this.dataModel = require("../models/menuSchema").default;
+                this.dataModel = MenuSchema;
                 break;
             case "Category":
-                this.dataModel = require("../models/categoryModel").default;
+                this.dataModel = CategoryModel;
                 break;
             default:
                 throw new Error("Invalid model name");
@@ -25,6 +28,15 @@ class MenuService {
                 .skip(skip)
                 .limit(limit)
                 .lean();
+        } catch (e) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async getCount(filter = {}) {
+        try {
+            return await this.dataModel.countDocuments(filter);
         } catch (e) {
             console.error(e);
             throw e;
@@ -88,5 +100,4 @@ class MenuService {
     }
 }
 
-// Export the class directly
 export default MenuService;

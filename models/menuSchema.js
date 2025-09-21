@@ -66,6 +66,10 @@ const MenuItemSchema = new Schema({
     },
     pricing_options: {
         type: [PricingOptionSchema],
+    },
+    portions: {
+        type: [String], // store multiple portion labels
+        default: []
     }
 }, { 
     timestamps: true,
