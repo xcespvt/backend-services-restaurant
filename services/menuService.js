@@ -7,7 +7,7 @@ class MenuService {
     constructor(modelName) {
         this.modelName = modelName;
         this.dataModel = null;
-        
+
         switch (modelName) {
             case "MenuItem":
                 this.dataModel = MenuSchema;
@@ -20,14 +20,9 @@ class MenuService {
         }
     }
 
-    async getData(filter = {}, select = '', sort = {}, skip = 0, limit = 100) {
+    async getData(filter, select, sort, skip, limit) {
         try {
-            return await this.dataModel.find(filter)
-                .select(select)
-                .sort(sort)
-                .skip(skip)
-                .limit(limit)
-                .lean();
+            return await this.dataModel.find(filter).read('secondaryPreferred').select(select).sort(sort).skip(skip).limit(limit).lean();
         } catch (e) {
             console.error(e);
             throw e;
@@ -43,11 +38,9 @@ class MenuService {
         }
     }
 
-    async getSingleDocument(filter = {}, select = '') {
+    async getSingleDocument(filter, select) {
         try {
-            return await this.dataModel.findOne(filter)
-                .select(select)
-                .lean();
+            return await this.dataModel.findOne(filter).read('secondaryPreferred').select(select).lean();
         } catch (e) {
             console.error(e);
             throw e;
@@ -64,18 +57,18 @@ class MenuService {
         }
     }
 
-    async updateData(filter, updateData, options = { new: true }) {
+    async updateData(filter, updateData, options = {}) {
         try {
             return await this.dataModel.findOneAndUpdate(
-                filter, 
-                updateData, 
-                { ...options, runValidators: true }
+                filter,
+                updateData,
+                { ...options, new: true }
             ).lean();
         } catch (e) {
             console.error(e);
             throw e;
         }
-    }
+    } z
 
     async deleteData(filter) {
         try {
@@ -92,7 +85,7 @@ class MenuService {
 
     async getAggregationData(pipeline = []) {
         try {
-            return await this.dataModel.aggregate(pipeline);
+            return await this.dataModel.aggregate(pipeline).read('secondaryPreferred');
         } catch (e) {
             console.error(e);
             throw e;

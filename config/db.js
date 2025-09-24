@@ -14,8 +14,6 @@ export const connectDB = async () => {
   try {
     await mongoose.connect(MONGODB_URI, {
       dbName: DB_NAME || undefined,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
 
     console.log(`✅ MongoDB Connected: ${mongoose.connection.host}/${mongoose.connection.name}`);

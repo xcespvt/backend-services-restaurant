@@ -18,6 +18,7 @@ import feedbackRoutes from './routes/feedback.routes.js';
 import refundRoutes from './routes/refund.routes.js';
 import settingRoutes from './routes/setting.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
+import offersRoutes from './routes/offers.routes.js';
 
 // App init
 const app = express();
@@ -44,7 +45,7 @@ const initializeApp = async () => {
 
     // Start server only if DB is connected
     app.listen(port, () => {
-      console.log(`🚀 Server is running on http://0.0.0.0:${port}`);
+      console.log(`🚀 Server is running on http://localhost:${port}`);
     });
 
   } catch (error) {
@@ -67,6 +68,7 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/refunds', refundRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/offers', offersRoutes);
 
 // Root route
 app.get('/', (req, res) => {
