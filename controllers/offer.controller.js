@@ -242,23 +242,34 @@ const offerController = {
     },
 
     toggleOfferAvailability: async (req, res) => {
-        try {
-            const { branchId, itemId } = req.params;
 
-            if (!branchId || !itemId) {
+        try {
+            const { branchId, offerId } = req.params;
+            const { status } = req.body;
+            if (!branchId || !offerId) {
                 return res.status(400).json({
                     success: false,
-                    message: "Branch ID and Item ID are required"
+                    message: "Branch ID and Offer ID are required"
                 });
             }
 
-            const result = await menuService.toggleMenuItemAvailability(branchId, itemId);
-
-            return res.status(200).json({
-                success: true,
-                message: `Menu item is now ${result.available ? 'available' : 'unavailable'}`,
-                data: result
-            });
+            if (status === "Pause") {
+                const result = await OfferService.updateData({ restaurantId: branchId, offerId }, { isActive: false, offerStatus: "Paused" });
+                return res.status(200).json({
+                    success: true,
+                    message: `Offer is now Paused`,
+                    data: result
+                });
+            }
+            if (status === "Activate"){
+                const result = await OfferService.updateData({ restaurantId: branchId, offerId }, { isActive: true, offerStatus: "Active" });
+                return res.status(200).json({
+                    success: true,
+                    message: `Offer is now Activated`,
+                    data: result
+                });
+            }
+          
         } catch (error) {
             console.error(error.message);
 

@@ -63,9 +63,14 @@ const Offer = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    offerStatus : {
+      type : String,
+      enum : ["Active","Scheduled","Paused","Inactive"],
+      default : "Active"
+    }
   },
   { timestamps: { currentTime: () => new Date(Date.now() + (5.5 * 60 * 60 * 1000)) }
-  , _id: false}
+  }
 );
 
 module.exports = mongoose.model('offersSchema',Offer, "offerSchema");
