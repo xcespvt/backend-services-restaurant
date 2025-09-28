@@ -45,7 +45,7 @@ const initializeApp = async () => {
 
     // Start server only if DB is connected
     app.listen(port, () => {
-      console.log(`🚀 Server is running on http://localhost:${port}`);
+      console.log(`🚀 Server is running on http://0.0.0.0:${port}`);
     });
 
   } catch (error) {

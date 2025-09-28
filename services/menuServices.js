@@ -86,6 +86,15 @@ const services = {
         return newDoc;
     },
 
+    getCountDocument: async (filter) => {
+        try {
+            return await DATA_MODEL.countDocuments(filter);
+        } catch (e) {
+            console.error(e.message);
+            throw e; // Make sure to re-throw the error to handle it in the controller
+        }
+    },
+
 };
 
 export default services;

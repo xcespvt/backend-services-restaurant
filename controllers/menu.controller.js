@@ -1,6 +1,6 @@
 "use strict";
-import MenuService from "../services/menuService.js";
-const menuService = new MenuService("MenuItem");
+import MENU_SERVICE from "../services/menuServices.js";
+
 
 // Rest of your controller code...
 
@@ -20,10 +20,10 @@ const menuController = {
       }
       
       // Get total count for pagination metadata
-      const totalItems = await menuService.getCount({ restaurantId: branchId });
+      const totalItems = await MENU_SERVICE.getCountDocument({ restaurantId: branchId });
       const totalPages = Math.ceil(totalItems / limit);
       
-      const menu = await menuService.getData(
+      const menu = await MENU_SERVICE.getData(
         { restaurantId: branchId },
         { _id: 0 },
         {}, // sort
@@ -75,7 +75,7 @@ const menuController = {
         });
       }
       
-      const menuItem = await menuService.addData({branchId, itemData});
+      const menuItem = await MENU_SERVICE.addData({branchId, itemData});
       
       return res.status(201).json({
         success: true,
@@ -105,7 +105,7 @@ const menuController = {
         });
       }
       
-      const menuItem = await menuService.updateData({branchId, itemId, itemData});
+      const menuItem = await MENU_SERVICE.updateData({branchId, itemId, itemData});
       
       return res.status(200).json({
         success: true,
@@ -141,7 +141,7 @@ const menuController = {
         });
       }
       
-      await menuService.deleteData({branchId, itemId});
+      await MENU_SERVICE.deleteData({branchId, itemId});
       
       return res.status(200).json({
         success: true,
@@ -176,7 +176,7 @@ const menuController = {
         });
       }
       
-      const result = await menuService.toggleMenuItemAvailability(branchId, itemId);
+      const result = await MENU_SERVICE.toggleMenuItemAvailability(branchId, itemId);
       
       return res.status(200).json({
         success: true,
@@ -220,7 +220,7 @@ const menuController = {
         });
       }
       
-      const result = await menuService.addCategory(branchId, name);
+      const result = await MENU_SERVICE.addCategory(branchId, name);
       
       return res.status(201).json({
         success: true,
