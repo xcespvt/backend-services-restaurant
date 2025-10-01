@@ -1,5 +1,6 @@
 "use strict";
 
+// this is table routes
 import express from "express";
 import tableController from "../controllers/table.controller.js";
 
