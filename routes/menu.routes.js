@@ -6,12 +6,11 @@ import menuController from "../controllers/menu.controller.js";
 const router = express.Router();
 
 
-//ads menu items 
-router.post("/add/menuitem",menuController.addMenuItem);
-
 
 // Get all menu items for a branch
 router.get("/getitems/:restaurantId", menuController.getMenuItems);
+
+router.post("/add", menuController.addMenuItem);
 
 // Update a menu item
 router.put("/:restaurantId/:itemId", menuController.updateMenuItem);
