@@ -51,7 +51,45 @@ const restaurantController = {
                 message: "Failed to add restaurant"
             });
         }
-    }
+    },
+    
+    addMenuItem: async (req, res) => {
+        try {
+            const { restaurantId, name, description, type, available, category, images, pricing_unit, pricing_options } = req.body;
+
+            let data = await MENU_SERVICE.addData({
+                restaurantId,
+                name,
+                description,
+                type,
+                available,
+                category,
+                images,
+                pricing_unit,
+                pricing_options
+            });
+
+            if (data) {
+                return res.status(200).json({
+                    success: 1,
+                    message: "Menu item added successfully",
+                    data
+                });
+            } else {
+                return res.status(400).json({
+                    success: 0,
+                    message: "Failed to add menu item"
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                success: 0,
+                message: "Failed to add menu item"
+            });
+        }
+
+    },
 
 };
 
