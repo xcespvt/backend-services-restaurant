@@ -5,7 +5,7 @@ import DATA_MODEL from "../models/offerModel.js";
 
 const services = {
 
-    getData: async function (filter, select, sort, skip, limit) {
+    getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {
         let data = [];
 
         try {

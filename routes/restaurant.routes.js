@@ -10,8 +10,7 @@ router.post('/hello',restaurantController.helloWorld);
 router.post('/add-restaurant',restaurantController.addRestaurant);
 
 
-router.post('/add-menu-item',restaurantController.addMenuItem);
-// router.get('/get-menu-item',restaurantController.getMenuItems);
+
 
 
 export default router;

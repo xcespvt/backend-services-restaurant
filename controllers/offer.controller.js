@@ -20,10 +20,10 @@ const offerController = {
             }
 
             // Get total count for pagination metadata
-            const totalItems = await menuService.getCount({ restaurantId: branchId });
+            const totalItems = await OfferService.getCount({ restaurantId: branchId });
             const totalPages = Math.ceil(totalItems / limit);
 
-            const menu = await menuService.getData(
+            const menu = await OfferService.getData(
                 { restaurantId: branchId },
                 { _id: 0 },
                 {}, // sort
@@ -181,7 +181,7 @@ const offerController = {
                 });
             }
 
-            const menuItem = await menuService.updateData({ branchId, itemId, itemData });
+            const menuItem = await OfferService.updateData({ branchId, itemId, itemData });
 
             return res.status(200).json({
                 success: true,
@@ -217,7 +217,7 @@ const offerController = {
                 });
             }
 
-            await menuService.deleteData({ branchId, itemId });
+            await OfferService.deleteData({ branchId, itemId });
 
             return res.status(200).json({
                 success: true,
@@ -307,7 +307,7 @@ const offerController = {
                 });
             }
 
-            const result = await menuService.addCategory(branchId, name);
+            const result = await OfferService.addCategory(branchId, name);
 
             return res.status(201).json({
                 success: true,

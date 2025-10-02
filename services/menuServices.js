@@ -5,7 +5,7 @@ import DATA_MODEL from "../models/menuSchema.js";
 
 const services = {
 
-    getData: async function (filter, select, sort, skip, limit) {
+    getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {
         let data = [];
 
         try {
@@ -85,14 +85,20 @@ const services = {
 
         return newDoc;
     },
-
     getCountDocument: async (filter) => {
+
+        let count = 0;
+
         try {
-            return await DATA_MODEL.countDocuments(filter);
+
+            count = await DATA_MODEL.countDocuments(filter).read('secondaryPreferred');
+
         } catch (e) {
+
             console.error(e.message);
-            throw e; // Make sure to re-throw the error to handle it in the controller
         }
+
+        return count;
     },
 
 };

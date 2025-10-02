@@ -1,5 +1,5 @@
 "use strict";
-import MENU_SERVICE from "../services/menuServices.js";
+import MenuService from "../services/menuServices.js";
 
 
 // Rest of your controller code...
@@ -7,30 +7,32 @@ import MENU_SERVICE from "../services/menuServices.js";
 const menuController = {
   getMenuItems: async (req, res) => {
     try {
-      const { branchId } = req.params;
-      const page = parseInt(req.query.page) || 1; // Default to page 1
-      const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+      const { restaurantId } = req.params;
+      const page = Number(req.query.page); // Default to page 1
+      const limit = Number(req.query.limit); // Default to 10 items per page
       const skip = (page - 1) * limit;
 
-      if (!branchId) {
+
+      if (!restaurantId) {
         return res.status(400).json({
           success: false,
-          message: "Branch ID is required"
+          message: "Restaurant ID is required"
         });
       }
-      
+
       // Get total count for pagination metadata
-      const totalItems = await MENU_SERVICE.getCountDocument({ restaurantId: branchId });
+      const totalItems = await MenuService.getCountDocument({ restaurantId: restaurantId });
       const totalPages = Math.ceil(totalItems / limit);
-      
-      const menu = await MENU_SERVICE.getData(
-        { restaurantId: branchId },
-        { _id: 0 },
-        {}, // sort
-        skip,
-        limit
+
+      const menu = await MenuService.getData(
+        { restaurantId: restaurantId },  // filter
+        { _id: 0 },                   // select
+        {},                           // sort
+        skip,                            // skip
+        limit                             // limit
       );
-      
+
+
       return res.status(200).json({
         success: true,
         message: "Menu items retrieved successfully",
@@ -46,7 +48,7 @@ const menuController = {
       });
     } catch (error) {
       console.error(error.message);
-      
+
       return res.status(500).json({
         success: false,
         message: "Error retrieving menu items",
@@ -54,59 +56,59 @@ const menuController = {
       });
     }
   },
-  
+
   addMenuItem: async (req, res) => {
     try {
-      const { branchId } = req.params;
-      const itemData = req.body;
-      
-      if (!branchId) {
-        return res.status(400).json({
-          success: false,
-          message: "Branch ID is required"
-        });
-      }
-      
-      // Validate required fields
-      if (!itemData.name || !itemData.price || !itemData.category) {
-        return res.status(400).json({
-          success: false,
-          message: "Missing required fields"
-        });
-      }
-      
-      const menuItem = await MENU_SERVICE.addData({branchId, itemData});
-      
-      return res.status(201).json({
-        success: true,
-        message: "Menu item added successfully",
-        data: menuItem
+      const { restaurantId, name, description, type, available, category, images, pricing_unit, pricing_options } = req.body;
+
+      let data = await MenuService.addData({
+        restaurantId,
+        name,
+        description,
+        type,
+        available,
+        category,
+        images,
+        pricing_unit,
+        pricing_options
       });
+
+      if (data) {
+        return res.status(200).json({
+          success: 1,
+          message: "Menu item added successfully",
+          data
+        });
+      } else {
+        return res.status(400).json({
+          success: 0,
+          message: "Failed to add menu item"
+        });
+      }
     } catch (error) {
-      console.error(error.message);
-      
+      console.error(error);
       return res.status(500).json({
-        success: false,
-        message: "Error adding menu item",
-        error: error.message
+        success: 0,
+        message: "Failed to add menu item"
       });
     }
+
   },
-  
+
   updateMenuItem: async (req, res) => {
     try {
       const { branchId, itemId } = req.params;
       const itemData = req.body;
-      
+
       if (!branchId || !itemId) {
         return res.status(400).json({
           success: false,
           message: "Branch ID and Item ID are required"
         });
       }
-      
-      const menuItem = await MENU_SERVICE.updateData({branchId, itemId, itemData});
-      
+
+      const menuItem = await MenuService.updateData({ branchId, itemId, itemData });
+
       return res.status(200).json({
         success: true,
         message: "Menu item updated successfully",
@@ -114,14 +116,14 @@ const menuController = {
       });
     } catch (error) {
       console.error(error.message);
-      
+
       if (error.message === "Menu item not found") {
         return res.status(404).json({
           success: false,
           message: "Menu item not found"
         });
       }
-      
+
       return res.status(500).json({
         success: false,
         message: "Error updating menu item",
@@ -129,34 +131,34 @@ const menuController = {
       });
     }
   },
-  
+
   deleteMenuItem: async (req, res) => {
     try {
       const { branchId, itemId } = req.params;
-      
+
       if (!branchId || !itemId) {
         return res.status(400).json({
           success: false,
           message: "Branch ID and Item ID are required"
         });
       }
-      
-      await MENU_SERVICE.deleteData({branchId, itemId});
-      
+
+      await MenuService.deleteData({ branchId, itemId });
+
       return res.status(200).json({
         success: true,
         message: "Menu item deleted successfully"
       });
     } catch (error) {
       console.error(error.message);
-      
+
       if (error.message === "Menu item not found") {
         return res.status(404).json({
           success: false,
           message: "Menu item not found"
         });
       }
-      
+
       return res.status(500).json({
         success: false,
         message: "Error deleting menu item",
@@ -164,20 +166,20 @@ const menuController = {
       });
     }
   },
-  
+
   toggleMenuItemAvailability: async (req, res) => {
     try {
       const { branchId, itemId } = req.params;
-      
+
       if (!branchId || !itemId) {
         return res.status(400).json({
           success: false,
           message: "Branch ID and Item ID are required"
         });
       }
-      
-      const result = await MENU_SERVICE.toggleMenuItemAvailability(branchId, itemId);
-      
+
+      const result = await MenuService.toggleMenuItemAvailability(branchId, itemId);
+
       return res.status(200).json({
         success: true,
         message: `Menu item is now ${result.available ? 'available' : 'unavailable'}`,
@@ -185,14 +187,14 @@ const menuController = {
       });
     } catch (error) {
       console.error(error.message);
-      
+
       if (error.message === "Menu item not found") {
         return res.status(404).json({
           success: false,
           message: "Menu item not found"
         });
       }
-      
+
       return res.status(500).json({
         success: false,
         message: "Error toggling menu item availability",
@@ -200,28 +202,28 @@ const menuController = {
       });
     }
   },
-  
+
   addCategory: async (req, res) => {
     try {
       const { branchId } = req.params;
       const { name } = req.body;
-      
+
       if (!branchId) {
         return res.status(400).json({
           success: false,
           message: "Branch ID is required"
         });
       }
-      
+
       if (!name) {
         return res.status(400).json({
           success: false,
           message: "Category name is required"
         });
       }
-      
-      const result = await MENU_SERVICE.addCategory(branchId, name);
-      
+
+      const result = await MenuService.addCategory(branchId, name);
+
       return res.status(201).json({
         success: true,
         message: "Category added successfully",
@@ -229,14 +231,14 @@ const menuController = {
       });
     } catch (error) {
       console.error(error.message);
-      
+
       if (error.message === "Category already exists") {
         return res.status(409).json({
           success: false,
           message: "Category already exists"
         });
       }
-      
+
       return res.status(500).json({
         success: false,
         message: "Error adding category",

@@ -5,22 +5,23 @@ import menuController from "../controllers/menu.controller.js";
 
 const router = express.Router();
 
-// Get all menu items for a branch
-router.get("/getitems/:branchId", menuController.getMenuItems);
 
-// Add a new menu item
-router.post("/:branchId", menuController.addMenuItem);
+//ads menu items 
+router.post('/add-menu-item',menuController.addMenuItem);
+
+// Get all menu items for a branch
+router.get("/getitems/:restaurantId", menuController.getMenuItems);
 
 // Update a menu item
-router.put("/:branchId/:itemId", menuController.updateMenuItem);
+router.put("/:restaurantId/:itemId", menuController.updateMenuItem);
 
 // Delete a menu item
-router.delete("/:branchId/:itemId", menuController.deleteMenuItem);
+router.delete("/:restaurantId/:itemId", menuController.deleteMenuItem);
 
 // Toggle menu item availability
-router.patch("/:branchId/:itemId/toggle-availability", menuController.toggleMenuItemAvailability);
+router.patch("/:restaurantId/:itemId/toggle-availability", menuController.toggleMenuItemAvailability);
 
 // Add a new category
-router.post("/:branchId/category", menuController.addCategory);
+router.post("/:restaurantId/category", menuController.addCategory);
 
 export default router;
