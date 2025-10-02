@@ -82,14 +82,16 @@ const menuController = {
       } else {
         return res.status(400).json({
           success: 0,
-          message: "Failed to add menu item"
+          message: "Failed to add menu item",
+          error: error.message
         });
       }
     } catch (error) {
       console.error(error);
       return res.status(500).json({
         success: 0,
-        message: "Failed to add menu item"
+        message: "Failed to add menu item",
+        error: error.message
       });
     }
 
