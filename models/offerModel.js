@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const Offer = new mongoose.Schema(
   {
@@ -73,4 +73,4 @@ const Offer = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('offersSchema',Offer, "offerSchema");
+export default mongoose.model('offersSchema',Offer, "offerSchema");
