@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 //ads menu items 
-router.post('/add/menuitem',menuController.addMenuItem);
+router.post("/add/menuitem",menuController.addMenuItem);
 
 
 // Get all menu items for a branch
