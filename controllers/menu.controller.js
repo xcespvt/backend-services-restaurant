@@ -59,6 +59,10 @@ const menuController = {
 
   addMenuItem: async (req, res) => {
     try {
+      return res.status(200).json({
+        success: 1,
+        message: "Yaha tak chal raha hai"
+      });
       const { restaurantId, name, description, type, available, category, images, pricing_unit, pricing_options } = req.body;
   
       let data = await MenuService.addData({
