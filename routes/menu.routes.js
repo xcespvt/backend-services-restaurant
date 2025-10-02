@@ -8,6 +8,11 @@ const router = express.Router();
 
 //ads menu items 
 router.post('/add-menu-item',menuController.addMenuItem);
+router.post('/test', (req, res) => {
+
+    res.json({ success: true, message: "Test successful" });
+  });
+  
 
 // Get all menu items for a branch
 router.get("/getitems/:restaurantId", menuController.getMenuItems);
