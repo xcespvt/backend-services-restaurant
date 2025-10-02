@@ -75,7 +75,9 @@ const services = {
         try {
 
             let dataObj = new DATA_MODEL(data);
+            console.log("dataObj",dataObj);
             let newDoc = await dataObj.save();
+            console.log("newDoc",newDoc);
             return newDoc;
 
         } catch (e) {
