@@ -60,7 +60,11 @@ const menuController = {
   addMenuItem: async (req, res) => {
     try {
       const { restaurantId, name, description, type, available, category, images, pricing_unit, pricing_options } = req.body;
-  
+      if (!restaurantId || !name || !type || !category || !pricing_unit || !pricing_options) {
+        return res.status(400).json({ success: false, message: "One or more filed names are not defined" });
+     }
+     // don't include portions in required check
+     
       let data = await MenuService.addData({
         restaurantId,
         name,
