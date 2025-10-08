@@ -5,15 +5,15 @@ import offerController from "../controllers/offer.controller.js";
 
 const router = express.Router();
 // Get all offers
-router.get("/:branchId", offerController.getOffers);
+router.get("/offers/:restaurantId/", offerController.getOffers);
 
-router.post("/offer/add", offerController.addOffers);    
+router.post("/offers/add", offerController.addOffers);    
 
-router.put("/offer/update/:branchId/:offerId", offerController.updateOffers);
+router.put("/offers/update/:restaurantId/:offerId", offerController.updateOffers);
 
-router.delete("/offer/delete/:branchId/:offerId", offerController.deleteOffers);
+router.delete("/offers/delete/:restaurantId/:offerId", offerController.deleteOffers);
 
-router.put("/offer/toggle/:branchId/:offerId", offerController.toggleOfferAvailability);
+router.put("/offers/toggle/:restaurantId/:offerId", offerController.toggleOfferAvailability);
 
 
 export default router;

@@ -12,13 +12,14 @@ const menuController = {
       const limit = Number(req.query.limit); // Default to 10 items per page
       const skip = (page - 1) * limit;
 
-
-      if (!restaurantId) {
+      if(page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !restaurantId || !page || !limit){
         return res.status(400).json({
           success: false,
-          message: "Restaurant ID is required"
+          message: "Invalid request"
         });
       }
+
+
 
       // Get total count for pagination metadata
       const totalItems = await MenuService.getCountDocument({ restaurantId: restaurantId });
@@ -103,53 +104,83 @@ const menuController = {
 
   updateMenuItem: async (req, res) => {
     try {
-      const { branchId, itemId } = req.params;
-      const itemData = req.body;
+ 
+      const { restaurantId, itemId } = req.params;
+        if (!restaurantId || !itemId) {
+            return res.status(400).json({
+                success: 0,
+                message: "Invalid request"
+            });
+        }
 
-      if (!branchId || !itemId) {
-        return res.status(400).json({
-          success: false,
-          message: "Branch ID and Item ID are required"
+        // Pull only fields you allow to be updated
+        const {
+            name,
+            description,
+            type,
+            available,
+            category,
+            images,
+            pricing_unit,
+            pricing_options
+        } = req.body;
+
+        // Build update payload only with provided fields (partial update)
+        const update = {};
+        if (restaurantId !== undefined) update.restaurantId = restaurantId;
+        if (itemId !== undefined) update.itemId = itemId;
+        if (name !== undefined) update.name = name;
+        if (description !== undefined) update.description = description;
+        if (type !== undefined) update.type = type;
+        if (available !== undefined) update.available = available;
+        if (category !== undefined) update.category = category;
+        if (images !== undefined) update.images = images;
+        if (pricing_unit !== undefined) update.pricing_unit = pricing_unit;
+        if (pricing_options !== undefined) update.pricing_options = pricing_options;
+
+        if (Object.keys(update).length === 0) {
+            return res.status(400).json({
+                success: 0,
+                message: "No fields provided to update"
+            });
+        }
+
+       
+        const data = await MenuService.updateData({restaurantId : restaurantId, itemId : itemId}, update);
+
+        if (!data) {
+            return res.status(404).json({
+                success: 0,
+                message: "Menu item not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: 1,
+            message: "Menu item updated successfully",
+            data
         });
-      }
-
-      const menuItem = await MenuService.updateData({ branchId, itemId, itemData });
-
-      return res.status(200).json({
-        success: true,
-        message: "Menu item updated successfully",
-        data: menuItem
-      });
     } catch (error) {
-      console.error(error.message);
-
-      if (error.message === "Menu item not found") {
-        return res.status(404).json({
-          success: false,
-          message: "Menu item not found"
+        console.error(error);
+        return res.status(500).json({
+            success: 0,
+            message: "Failed to update menu item"
         });
-      }
-
-      return res.status(500).json({
-        success: false,
-        message: "Error updating menu item",
-        error: error.message
-      });
     }
-  },
+},
 
   deleteMenuItem: async (req, res) => {
     try {
-      const { branchId, itemId } = req.params;
+      const { restaurantId, itemId } = req.params;
 
-      if (!branchId || !itemId) {
+      if (!restaurantId || !itemId) {
         return res.status(400).json({
           success: false,
-          message: "Branch ID and Item ID are required"
+          message: "Invalid Request"
         });
       }
 
-      await MenuService.deleteData({ branchId, itemId });
+      await MenuService.deleteData({ restaurantId,  itemId });
 
       return res.status(200).json({
         success: true,

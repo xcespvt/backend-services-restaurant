@@ -36,6 +36,7 @@ const PricingOptionSchema = new Schema({
 
 const MenuItemSchema = new Schema({
     restaurantId: { type: String , index: true,unique: false},
+    itemId: { type: String , index: true,unique: true},
     name: {
         type: String,
         trim: true,

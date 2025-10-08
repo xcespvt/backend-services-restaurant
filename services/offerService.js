@@ -5,7 +5,7 @@ import DATA_MODEL from "../models/offerModel.js";
 
 const services = {
 
-    getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {
+getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {
         let data = [];
 
         try {
@@ -85,7 +85,21 @@ const services = {
 
         return newDoc;
     },
+ getCountDocument: async (filter) => {
 
+        let count = 0;
+
+        try {
+
+            count = await DATA_MODEL.countDocuments(filter).read('secondaryPreferred');
+
+        } catch (e) {
+
+            console.error(e.message);
+        }
+
+        return count;
+    },
 };
 
 export default services;

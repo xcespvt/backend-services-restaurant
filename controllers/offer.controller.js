@@ -7,44 +7,45 @@ import { v4 as uuidv4 } from "uuid";
 const offerController = {
     getOffers: async (req, res) => {
         try {
-            const { branchId } = req.params;
-            const page = parseInt(req.query.page) || 1; // Default to page 1
-            const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
-            const skip = (page - 1) * limit;
+        const { restaurantId } = req.params;
+      const page = Number(req.query.page); // Default to page 1
+      const limit = Number(req.query.limit); // Default to 10 items per page
+      const skip = (page - 1) * limit;
 
-            if (!branchId) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Branch ID is required"
-                });
-            }
+      if(page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !restaurantId || !page || !limit){
+        return res.status(400).json({
+          success: false,
+          message: "Invalid request"
+        });
+      }
 
-            // Get total count for pagination metadata
-            const totalItems = await OfferService.getCount({ restaurantId: branchId });
-            const totalPages = Math.ceil(totalItems / limit);
+      // Get total count for pagination metadata
+      const totalItems = await OfferService.getCountDocument({ restaurantId: restaurantId });
+      const totalPages = Math.ceil(totalItems / limit);
 
-            const menu = await OfferService.getData(
-                { restaurantId: branchId },
-                { _id: 0 },
-                {}, // sort
-                skip,
-                limit
-            );
+      const offers = await OfferService.getData(
+        { restaurantId: restaurantId },  // filter
+        { _id: 0 },                   // select
+        {},                           // sort
+        skip,                            // skip
+        limit                             // limit
+      );
 
-            return res.status(200).json({
-                success: true,
-                message: "Menu items retrieved successfully",
-                data: menu,
-                pagination: {
-                    currentPage: page,
-                    itemsPerPage: limit,
-                    totalItems,
-                    totalPages,
-                    hasNextPage: page < totalPages,
-                    hasPreviousPage: page > 1
-                }
-            });
-        } catch (error) {
+
+      return res.status(200).json({
+        success: true,
+        message: "Offers retrieved successfully",
+        data: offers,
+        pagination: {
+          currentPage: page,
+          itemsPerPage: limit,
+          totalItems,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1
+        }
+      });
+    }  catch (error) {
             console.error(error.message);
 
             return res.status(500).json({
@@ -53,7 +54,7 @@ const offerController = {
                 error: error.message
             });
         }
-    },
+    },  
 
     addOffers: async (req, res) => {
         try {
@@ -171,22 +172,22 @@ const offerController = {
 
     updateOffers: async (req, res) => {
         try {
-            const { branchId, itemId } = req.params;
+            const { restaurantId, offerId } = req.params;
             const itemData = req.body;
 
-            if (!branchId || !itemId) {
+            if (!restaurantId || !offerId) {
                 return res.status(400).json({
                     success: false,
-                    message: "Branch ID and Item ID are required"
+                    message: "Invalid Request"
                 });
             }
 
-            const menuItem = await OfferService.updateData({ branchId, itemId, itemData });
+            const offer = await OfferService.updateData({ restaurantId, offerId, itemData });
 
             return res.status(200).json({
                 success: true,
-                message: "Menu item updated successfully",
-                data: menuItem
+                message: "Offer updated successfully",
+                data: offer
             });
         } catch (error) {
             console.error(error.message);
@@ -208,16 +209,16 @@ const offerController = {
 
     deleteOffers: async (req, res) => {
         try {
-            const { branchId, itemId } = req.params;
+            const { restaurantId, itemId } = req.params;
 
-            if (!branchId || !itemId) {
+            if (!restaurantId || !itemId) {
                 return res.status(400).json({
                     success: false,
                     message: "Branch ID and Item ID are required"
                 });
             }
 
-            await OfferService.deleteData({ branchId, itemId });
+            await OfferService.deleteData({ restaurantId, itemId });
 
             return res.status(200).json({
                 success: true,
@@ -244,9 +245,9 @@ const offerController = {
     toggleOfferAvailability: async (req, res) => {
 
         try {
-            const { branchId, offerId } = req.params;
+            const { restaurantId, offerId } = req.params;
             const { status } = req.body;
-            if (!branchId || !offerId) {
+            if (!restaurantId || !offerId) {
                 return res.status(400).json({
                     success: false,
                     message: "Branch ID and Offer ID are required"
@@ -254,7 +255,7 @@ const offerController = {
             }
 
             if (status === "Pause") {
-                const result = await OfferService.updateData({ restaurantId: branchId, offerId }, { isActive: false, offerStatus: "Paused" });
+                const result = await OfferService.updateData({ restaurantId: restaurantId, offerId }, { isActive: false, offerStatus: "Paused" });
                 return res.status(200).json({
                     success: true,
                     message: `Offer is now Paused`,
@@ -262,7 +263,7 @@ const offerController = {
                 });
             }
             if (status === "Activate"){
-                const result = await OfferService.updateData({ restaurantId: branchId, offerId }, { isActive: true, offerStatus: "Active" });
+                const result = await OfferService.updateData({ restaurantId: restaurantId, offerId }, { isActive: true, offerStatus: "Active" });
                 return res.status(200).json({
                     success: true,
                     message: `Offer is now Activated`,
@@ -290,10 +291,10 @@ const offerController = {
 
     addOfferCategory: async (req, res) => {
         try {
-            const { branchId } = req.params;
+            const { restaurantId } = req.params;
             const { name } = req.body;
 
-            if (!branchId) {
+            if (!restaurantId) {
                 return res.status(400).json({
                     success: false,
                     message: "Branch ID is required"
@@ -307,7 +308,7 @@ const offerController = {
                 });
             }
 
-            const result = await OfferService.addCategory(branchId, name);
+            const result = await OfferService.addCategory(restaurantId, name);
 
             return res.status(201).json({
                 success: true,

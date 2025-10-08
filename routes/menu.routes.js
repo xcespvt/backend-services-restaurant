@@ -10,13 +10,15 @@ const router = express.Router();
 // Get all menu items for a branch
 router.get("/getitems/:restaurantId", menuController.getMenuItems);
 
+// Update a menu item
+router.put("/updateitems/:restaurantId/:itemId", menuController.updateMenuItem);
+
 router.post("/add", menuController.addMenuItem);
 
-// Update a menu item
-router.put("/:restaurantId/:itemId", menuController.updateMenuItem);
+
 
 // Delete a menu item
-router.delete("/:restaurantId/:itemId", menuController.deleteMenuItem);
+router.delete("/deleteitems/:restaurantId/:itemId", menuController.deleteMenuItem);
 
 // Toggle menu item availability
 router.patch("/:restaurantId/:itemId/toggle-availability", menuController.toggleMenuItemAvailability);
