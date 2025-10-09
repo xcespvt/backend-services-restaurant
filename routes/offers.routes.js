@@ -5,7 +5,7 @@ import offerController from "../controllers/offer.controller.js";
 
 const router = express.Router();
 // Get all offers
-router.get("/offers/:restaurantId/", offerController.getOffers);
+router.get("/offers/:restaurantId", offerController.getOffers);
 
 router.post("/offers/add", offerController.addOffers);    
 
