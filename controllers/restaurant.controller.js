@@ -59,7 +59,7 @@ const restaurantController = {
 
             let data = await MENU_SERVICE.addData({
                 restaurantId,
-                itemId: uuidv4(),
+                itemId: uuidv4(),   
                 name,
                 description,
                 type,
