@@ -2,6 +2,7 @@
 
 import express from "express";
 import branchController from "../controllers/branch.controller.js";
+import mainBranchController from "../controllers/mainBranch.controller.js";
 
 const router = express.Router();
 
@@ -19,5 +20,12 @@ router.delete("/:branchId", branchController.deleteBranch);
 
 // Toggle branch online status
 router.patch("/:branchId/toggle-online", branchController.toggleBranchOnlineStatus);
+
+
+
+//main branch routes goes here
+
+
+router.get("/mainbranch", mainBranchController.getMainBranches);
 
 export default router;

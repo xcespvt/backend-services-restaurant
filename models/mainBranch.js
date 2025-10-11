@@ -66,4 +66,4 @@ const mainBranchSchema = new Schema({
   timestamps: true // This will automatically handle createdAt and updatedAt
 });
 
-export default mongoose.model('mainBranch', mainBranchSchema);
+export default mongoose.model('mainBranch', mainBranchSchema,'mainBranch');
