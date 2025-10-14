@@ -1,17 +1,14 @@
 // ecosystem.config.js
-
 module.exports = {
-  apps: [{
-    name: "app",
-    script: "index.js",
-    interpreter: "node",
-    env: {
-      /**
-       * This is your full system PATH, hardcoded.
-       * Since '/home/rocky/.nvm/versions/node/v24.9.0/bin' is in the PATH, 
-       * the system will find the 'node' interpreter without any issues.
-       */
-      PATH: "/home/rocky/.nvm/versions/node/v24.9.0/bin",
+  apps: [
+    {
+      name: "app",
+      script: "index.js",
+      interpreter: "/home/rocky/.nvm/versions/node/v24.9.0/bin/node",
+      env: {
+        PATH: `/home/rocky/.nvm/versions/node/v24.9.0/bin:${process.env.PATH}`,
+        NODE_ENV: "production",
+      },
     },
-  }]
+  ],
 };
