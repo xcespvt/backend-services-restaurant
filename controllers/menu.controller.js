@@ -283,7 +283,37 @@ const menuController = {
         error: error.message
       });
     }
+  },
+
+ searchMenuItems: async (req, res) => {
+  try {
+    const { query } = req.query; // e.g. /api/menu/search?query=pizza
+    if (!query || query.trim() === "") {
+      return res.status(400).json({
+        success: 0,
+        message: "Search query is required.",
+      });
+    }
+
+    // Ensure text index exists on `name` field (recommended to add in schema: MenuItemSchema.index({ name: "text" }))
+    const filter = { $text: { $search: query } };
+    const select = { _id: 0, name: 1, description: 1, category: 1, images: 1 };
+
+    const data = await MenuService.getData(filter, select);
+
+    return res.status(200).json({
+      success: 1,
+      count: data.length,
+      data,
+    });
+  } catch (error) {
+    console.error("Search error:", error);
+    return res.status(500).json({
+      success: 0,
+      message: "Server error while searching menu items.",
+    });
   }
+ }
 };
 
 export default menuController;

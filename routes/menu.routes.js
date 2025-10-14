@@ -10,6 +10,9 @@ const router = express.Router();
 // Get all menu items for a branch
 router.get("/getitems/:restaurantId", menuController.getMenuItems);
 
+// Search menu items
+router.get("/search", menuController.searchMenuItems);
+
 // Update a menu item
 router.put("/updateitems/:restaurantId/:itemId", menuController.updateMenuItem);
 
