@@ -11,7 +11,7 @@ module.exports = {
        * Since '/home/rocky/.nvm/versions/node/v24.9.0/bin' is in the PATH, 
        * the system will find the 'node' interpreter without any issues.
        */
-      PATH: "/home/rocky/.nvm/versions/node/v24.9.0/bin:/home/rocky/.local/bin:/home/rocky/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin",
+      PATH: "/home/rocky/.nvm/versions/node/v24.9.0/bin",
     },
   }]
 };
