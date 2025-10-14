@@ -1,5 +1,5 @@
 "use strict";
-import mainBranchService from "../services/mainBranchService";
+import mainBranchService from "../services/mainBranchService.js";
 
 
 // Rest of your controller code...
