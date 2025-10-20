@@ -287,6 +287,14 @@ const menuController = {
 
  searchMenuItems: async (req, res) => {
   try {
+    const { restaurantId } = req.params;
+    if (!restaurantId) {
+      return res.status(400).json({
+        success: 0,
+        message: "Invalid request.",
+      });
+    }
+
     const { query } = req.query; // e.g. /api/menu/search?query=pizza
     if (!query || query.trim() === "") {
       return res.status(400).json({
@@ -296,10 +304,17 @@ const menuController = {
     }
 
     // Ensure text index exists on `name` field (recommended to add in schema: MenuItemSchema.index({ name: "text" }))
-    const filter = { $text: { $search: query } };
+    const filter = { restaurantId: { $eq: restaurantId }, $text: { $search: query } };
     const select = { _id: 0, name: 1, description: 1, category: 1, images: 1 };
 
     const data = await MenuService.getData(filter, select);
+
+    if(!data || data.length === 0){
+      return res.status(404).json({
+        success: 0,
+        message: "No menu items found.",
+      });
+    }
 
     return res.status(200).json({
       success: 1,
