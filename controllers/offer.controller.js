@@ -5,26 +5,26 @@ import { v4 as uuidv4 } from "uuid";
 // Rest of your controller code...
 
 const offerController = {
-    getOffers: async (req, res) => {
+    getOffers: async (request, reply) => {
         try {
-        const { restaurantId } = req.params;
-      const page = Number(req.query.page); // Default to page 1
-      const limit = Number(req.query.limit); // Default to 10 items per page
+        const { replytaurantId } = request.params;
+      const page = Number(request.query.page); // Default to page 1
+      const limit = Number(request.query.limit); // Default to 10 items per page
       const skip = (page - 1) * limit;
 
-      if(page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !restaurantId || !page || !limit){
-        return res.status(400).json({
+      if(page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !replytaurantId || !page || !limit){
+        return reply.code(400).send({
           success: false,
-          message: "Invalid request"
+          message: "Invalid requestuest"
         });
       }
 
       // Get total count for pagination metadata
-      const totalItems = await OfferService.getCountDocument({ restaurantId: restaurantId });
+      const totalItems = await OfferService.getCountDocument({ replytaurantId: replytaurantId });
       const totalPages = Math.ceil(totalItems / limit);
 
       const offers = await OfferService.getData(
-        { restaurantId: restaurantId },  // filter
+        { replytaurantId: replytaurantId },  // filter
         { _id: 0 },                   // select
         {},                           // sort
         skip,                            // skip
@@ -32,7 +32,7 @@ const offerController = {
       );
 
 
-      return res.status(200).json({
+      return reply.code(200).send({
         success: true,
         message: "Offers retrieved successfully",
         data: offers,
@@ -48,7 +48,7 @@ const offerController = {
     }  catch (error) {
             console.error(error.message);
 
-            return res.status(500).json({
+            return reply.code(500).send({
                 success: false,
                 message: "Error retrieving menu items",
                 error: error.message
@@ -56,10 +56,10 @@ const offerController = {
         }
     },  
 
-    addOffers: async (req, res) => {
+    addOffers: async (request, reply) => {
         try {
             const {
-                restaurantId,
+                replytaurantId,
                 offerTitle,
                 description,
                 offerType,
@@ -71,48 +71,48 @@ const offerController = {
                 minimumOrder,
                 validUntil,
                 isActive
-            } = req.body;
+            } = request.body;
 
-            // Validate restaurantId
-            if (!restaurantId) {
-                return res.status(400).json({
+            // Validate replytaurantId
+            if (!replytaurantId) {
+                return reply.code(400).send({
                     success: false,
-                    message: "Restaurant ID is required",
+                    message: "Restaurant ID is requestuired",
                 });
             }
 
             // Validate offerType
             if (!offerType) {
-                return res.status(400).json({
+                return reply.code(400).send({
                     success: false,
-                    message: "Offer type is required",
+                    message: "Offer type is requestuired",
                 });
             }
 
             // Conditional validations based on offerType
             if (offerType === "Percentage Discount" && !discountPercentage) {
-                return res.status(400).json({
+                return reply.code(400).send({
                     success: false,
-                    message: "Discount percentage is required for Percentage Discount offers",
+                    message: "Discount percentage is requestuired for Percentage Discount offers",
                 });
             }
 
             if (offerType === "Flat Discount" && !discountAmount) {
-                return res.status(400).json({
+                return reply.code(400).send({
                     success: false,
-                    message: "Discount amount is required for Flat Discount offers",
+                    message: "Discount amount is requestuired for Flat Discount offers",
                 });
             }
 
             if (offerType === "Free Item" && !freeItem) {
-                return res.status(400).json({
+                return reply.code(400).send({
                     success: false,
                     message: "Free item must be provided for Free Item offers",
                 });
             }
 
             if (offerType === "Buy-One-Get-One (BOGO)" && !bogoItems) {
-                return res.status(400).json({
+                return reply.code(400).send({
                     success: false,
                     message: "BOGO items must be provided for Buy-One-Get-One offers",
                 });
@@ -124,23 +124,23 @@ const offerController = {
                     !happyHourTiming.startTime ||
                     !happyHourTiming.endTime
                 ) {
-                    return res.status(400).json({
+                    return reply.code(400).send({
                         success: false,
-                        message: "Happy Hour start and end times are required",
+                        message: "Happy Hour start and end times are requestuired",
                     });
                 }
             }
 
             if (!validUntil) {
-                return res.status(400).json({
+                return reply.code(400).send({
                     success: false,
-                    message: "Valid until date is required",
+                    message: "Valid until date is requestuired",
                 });
             }
 
             // Create new offer
             const newOffer = await OfferService.addData({
-                restaurantId,
+                replytaurantId,
                 offerId: uuidv4(),
                 offerTitle,
                 description,
@@ -155,14 +155,14 @@ const offerController = {
                 isActive: isActive !== undefined ? isActive : true,
             });
 
-            return res.status(201).json({
+            return reply.code(201).send({
                 success: true,
                 message: "Offer created successfully",
                 data: newOffer,
             });
         } catch (error) {
             console.error("Error adding offer:", error.message);
-            return res.status(500).json({
+            return reply.code(500).send({
                 success: false,
                 message: "Error adding offer",
                 error: error.message,
@@ -170,21 +170,21 @@ const offerController = {
         }
     },
 
-    updateOffers: async (req, res) => {
+    updateOffers: async (request, reply) => {
         try {
-            const { restaurantId, offerId } = req.params;
-            const itemData = req.body;
+            const { replytaurantId, offerId } = request.params;
+            const itemData = request.body;
 
-            if (!restaurantId || !offerId) {
-                return res.status(400).json({
+            if (!replytaurantId || !offerId) {
+                return reply.code(400).send({
                     success: false,
                     message: "Invalid Request"
                 });
             }
 
-            const offer = await OfferService.updateData({ restaurantId, offerId, itemData });
+            const offer = await OfferService.updateData({ replytaurantId, offerId, itemData });
 
-            return res.status(200).json({
+            return reply.code(200).send({
                 success: true,
                 message: "Offer updated successfully",
                 data: offer
@@ -193,13 +193,13 @@ const offerController = {
             console.error(error.message);
 
             if (error.message === "Menu item not found") {
-                return res.status(404).json({
+                return reply.code(404).send({
                     success: false,
                     message: "Menu item not found"
                 });
             }
 
-            return res.status(500).json({
+            return reply.code(500).send({
                 success: false,
                 message: "Error updating menu item",
                 error: error.message
@@ -207,20 +207,20 @@ const offerController = {
         }
     },
 
-    deleteOffers: async (req, res) => {
+    deleteOffers: async (request, reply) => {
         try {
-            const { restaurantId, itemId } = req.params;
+            const { replytaurantId, itemId } = request.params;
 
-            if (!restaurantId || !itemId) {
-                return res.status(400).json({
+            if (!replytaurantId || !itemId) {
+                return reply.code(400).send({
                     success: false,
-                    message: "Branch ID and Item ID are required"
+                    message: "Branch ID and Item ID are requestuired"
                 });
             }
 
-            await OfferService.deleteData({ restaurantId, itemId });
+            await OfferService.deleteData({ replytaurantId, itemId });
 
-            return res.status(200).json({
+            return reply.code(200).send({
                 success: true,
                 message: "Menu item deleted successfully"
             });
@@ -228,13 +228,13 @@ const offerController = {
             console.error(error.message);
 
             if (error.message === "Menu item not found") {
-                return res.status(404).json({
+                return reply.code(404).send({
                     success: false,
                     message: "Menu item not found"
                 });
             }
 
-            return res.status(500).json({
+            return reply.code(500).send({
                 success: false,
                 message: "Error deleting menu item",
                 error: error.message
@@ -242,32 +242,32 @@ const offerController = {
         }
     },
 
-    toggleOfferAvailability: async (req, res) => {
+    toggleOfferAvailability: async (request, reply) => {
 
         try {
-            const { restaurantId, offerId } = req.params;
-            const { status } = req.body;
-            if (!restaurantId || !offerId) {
-                return res.status(400).json({
+            const { replytaurantId, offerId } = request.params;
+            const { code } = request.body;
+            if (!replytaurantId || !offerId) {
+                return reply.code(400).send({
                     success: false,
-                    message: "Branch ID and Offer ID are required"
+                    message: "Branch ID and Offer ID are requestuired"
                 });
             }
 
-            if (status === "Pause") {
-                const result = await OfferService.updateData({ restaurantId: restaurantId, offerId }, { isActive: false, offerStatus: "Paused" });
-                return res.status(200).json({
+            if (code === "Pause") {
+                const replyult = await OfferService.updateData({ replytaurantId: replytaurantId, offerId }, { isActive: false, offerStatus: "Paused" });
+                return reply.code(200).send({
                     success: true,
                     message: `Offer is now Paused`,
-                    data: result
+                    data: replyult
                 });
             }
-            if (status === "Activate"){
-                const result = await OfferService.updateData({ restaurantId: restaurantId, offerId }, { isActive: true, offerStatus: "Active" });
-                return res.status(200).json({
+            if (code === "Activate"){
+                const replyult = await OfferService.updateData({ replytaurantId: replytaurantId, offerId }, { isActive: true, offerStatus: "Active" });
+                return reply.code(200).send({
                     success: true,
                     message: `Offer is now Activated`,
-                    data: result
+                    data: replyult
                 });
             }
           
@@ -275,13 +275,13 @@ const offerController = {
             console.error(error.message);
 
             if (error.message === "Menu item not found") {
-                return res.status(404).json({
+                return reply.code(404).send({
                     success: false,
                     message: "Menu item not found"
                 });
             }
 
-            return res.status(500).json({
+            return reply.code(500).send({
                 success: false,
                 message: "Error toggling menu item availability",
                 error: error.message
@@ -289,43 +289,43 @@ const offerController = {
         }
     },
 
-    addOfferCategory: async (req, res) => {
+    addOfferCategory: async (request, reply) => {
         try {
-            const { restaurantId } = req.params;
-            const { name } = req.body;
+            const { replytaurantId } = request.params;
+            const { name } = request.body;
 
-            if (!restaurantId) {
-                return res.status(400).json({
+            if (!replytaurantId) {
+                return reply.code(400).send({
                     success: false,
-                    message: "Branch ID is required"
+                    message: "Branch ID is requestuired"
                 });
             }
 
             if (!name) {
-                return res.status(400).json({
+                return reply.code(400).send({
                     success: false,
-                    message: "Category name is required"
+                    message: "Category name is requestuired"
                 });
             }
 
-            const result = await OfferService.addCategory(restaurantId, name);
+            const replyult = await OfferService.addCategory(replytaurantId, name);
 
-            return res.status(201).json({
+            return reply.code(201).send({
                 success: true,
                 message: "Category added successfully",
-                data: result
+                data: replyult
             });
         } catch (error) {
             console.error(error.message);
 
             if (error.message === "Category already exists") {
-                return res.status(409).json({
+                return reply.code(409).send({
                     success: false,
                     message: "Category already exists"
                 });
             }
 
-            return res.status(500).json({
+            return reply.code(500).send({
                 success: false,
                 message: "Error adding category",
                 error: error.message

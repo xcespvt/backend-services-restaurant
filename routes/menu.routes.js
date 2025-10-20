@@ -1,32 +1,32 @@
-"use strict";
-
-import express from "express";
 import menuController from "../controllers/menu.controller.js";
 
-const router = express.Router();
+/**
+ * Fastify plugin for menu routes
+ * @param {import('fastify').FastifyInstance} fastify
+ * @param {*} options
+ */
+async function menuRoutes(fastify, options) {
 
+  // Get all menu items for a branch
+  fastify.get("/getitems/:restaurantId", menuController.getMenuItems);
 
+  // Search menu items
+  fastify.get("/:restaurantId/search", menuController.searchMenuItems);
 
-// Get all menu items for a branch
-router.get("/getitems/:restaurantId", menuController.getMenuItems);
+  // Update a menu item
+  fastify.put("/updateitems/:restaurantId/:itemId", menuController.updateMenuItem);
 
-// Search menu items
-router.get("/:restaurantId/search", menuController.searchMenuItems);
+  // Add a new menu item
+  fastify.post("/add", menuController.addMenuItem);
 
-// Update a menu item
-router.put("/updateitems/:restaurantId/:itemId", menuController.updateMenuItem);
+  // Delete a menu item
+  fastify.delete("/deleteitems/:restaurantId/:itemId", menuController.deleteMenuItem);
 
-router.post("/add", menuController.addMenuItem);
+  // Toggle menu item availability
+  fastify.patch("/:restaurantId/:itemId/toggle-availability", menuController.toggleMenuItemAvailability);
 
+  // Add a new category
+  fastify.post("/:restaurantId/category", menuController.addCategory);
+}
 
-
-// Delete a menu item
-router.delete("/deleteitems/:restaurantId/:itemId", menuController.deleteMenuItem);
-
-// Toggle menu item availability
-router.patch("/:restaurantId/:itemId/toggle-availability", menuController.toggleMenuItemAvailability);
-
-// Add a new category
-router.post("/:restaurantId/category", menuController.addCategory);
-
-export default router;
+export default menuRoutes;
