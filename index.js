@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import ultimateExpress from 'ultimate-express';
+// import ultimateExpress from 'ultimate-express';
 
 // 🧠 Import DB functions
 import { connectDB, testConnection } from './config/db.js';
@@ -22,7 +22,7 @@ import analyticsRoutes from './routes/analytics.routes.js';
 import offersRoutes from './routes/offers.routes.js';
 
 // App init
-const app = ultimateExpress();
+const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
