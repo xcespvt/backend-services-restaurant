@@ -7,12 +7,12 @@ import { v4 as uuidv4 } from "uuid";
 const offerController = {
     getOffers: async (request, reply) => {
         try {
-        const { replytaurantId } = request.params;
+        const { restaurantId } = request.params;
       const page = Number(request.query.page); // Default to page 1
       const limit = Number(request.query.limit); // Default to 10 items per page
       const skip = (page - 1) * limit;
 
-      if(page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !replytaurantId || !page || !limit){
+      if(page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !restaurantId || !page || !limit){
         return reply.code(400).send({
           success: false,
           message: "Invalid requestuest"
@@ -20,11 +20,11 @@ const offerController = {
       }
 
       // Get total count for pagination metadata
-      const totalItems = await OfferService.getCountDocument({ replytaurantId: replytaurantId });
+      const totalItems = await OfferService.getCountDocument({ restaurantId: restaurantId });
       const totalPages = Math.ceil(totalItems / limit);
 
       const offers = await OfferService.getData(
-        { replytaurantId: replytaurantId },  // filter
+        { restaurantId: restaurantId },  // filter
         { _id: 0 },                   // select
         {},                           // sort
         skip,                            // skip
@@ -59,7 +59,7 @@ const offerController = {
     addOffers: async (request, reply) => {
         try {
             const {
-                replytaurantId,
+                restaurantId,
                 offerTitle,
                 description,
                 offerType,
@@ -73,11 +73,11 @@ const offerController = {
                 isActive
             } = request.body;
 
-            // Validate replytaurantId
-            if (!replytaurantId) {
+            // Validate restaurantId
+            if (!restaurantId) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Restaurant ID is requestuired",
+                    message: "Restaurant ID is required",
                 });
             }
 
@@ -85,7 +85,7 @@ const offerController = {
             if (!offerType) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Offer type is requestuired",
+                    message: "Offer type is required",
                 });
             }
 
@@ -93,14 +93,14 @@ const offerController = {
             if (offerType === "Percentage Discount" && !discountPercentage) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Discount percentage is requestuired for Percentage Discount offers",
+                    message: "Discount percentage is required for Percentage Discount offers",
                 });
             }
 
             if (offerType === "Flat Discount" && !discountAmount) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Discount amount is requestuired for Flat Discount offers",
+                    message: "Discount amount is required for Flat Discount offers",
                 });
             }
 
@@ -126,7 +126,7 @@ const offerController = {
                 ) {
                     return reply.code(400).send({
                         success: false,
-                        message: "Happy Hour start and end times are requestuired",
+                        message: "Happy Hour start and end times are required",
                     });
                 }
             }
@@ -134,13 +134,13 @@ const offerController = {
             if (!validUntil) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Valid until date is requestuired",
+                    message: "Valid until date is required",
                 });
             }
 
             // Create new offer
             const newOffer = await OfferService.addData({
-                replytaurantId,
+                restaurantId,
                 offerId: uuidv4(),
                 offerTitle,
                 description,
@@ -172,17 +172,17 @@ const offerController = {
 
     updateOffers: async (request, reply) => {
         try {
-            const { replytaurantId, offerId } = request.params;
+            const { restaurantId, offerId } = request.params;
             const itemData = request.body;
 
-            if (!replytaurantId || !offerId) {
+            if (!restaurantId || !offerId) {
                 return reply.code(400).send({
                     success: false,
                     message: "Invalid Request"
                 });
             }
 
-            const offer = await OfferService.updateData({ replytaurantId, offerId, itemData });
+            const offer = await OfferService.updateData({ restaurantId, offerId, itemData });
 
             return reply.code(200).send({
                 success: true,
@@ -209,16 +209,16 @@ const offerController = {
 
     deleteOffers: async (request, reply) => {
         try {
-            const { replytaurantId, itemId } = request.params;
+            const { restaurantId, itemId } = request.params;
 
-            if (!replytaurantId || !itemId) {
+            if (!restaurantId || !itemId) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Branch ID and Item ID are requestuired"
+                    message: "Branch ID and Item ID are required"
                 });
             }
 
-            await OfferService.deleteData({ replytaurantId, itemId });
+            await OfferService.deleteData({ restaurantId, itemId });
 
             return reply.code(200).send({
                 success: true,
@@ -245,29 +245,29 @@ const offerController = {
     toggleOfferAvailability: async (request, reply) => {
 
         try {
-            const { replytaurantId, offerId } = request.params;
-            const { code } = request.body;
-            if (!replytaurantId || !offerId) {
+            const { restaurantId, offerId } = request.params;
+            const { status } = request.body;  
+            if (!restaurantId || !offerId) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Branch ID and Offer ID are requestuired"
+                    message: "Branch ID and Offer ID are required"
                 });
             }
 
-            if (code === "Pause") {
-                const replyult = await OfferService.updateData({ replytaurantId: replytaurantId, offerId }, { isActive: false, offerStatus: "Paused" });
+            if (status === "Pause") {
+                const result = await OfferService.updateData({ restaurantId: restaurantId, offerId }, { isActive: false, offerStatus: "Paused" });
                 return reply.code(200).send({
                     success: true,
                     message: `Offer is now Paused`,
-                    data: replyult
+                    data: result
                 });
             }
-            if (code === "Activate"){
-                const replyult = await OfferService.updateData({ replytaurantId: replytaurantId, offerId }, { isActive: true, offerStatus: "Active" });
+            if (status === "Activate"){
+                const result = await OfferService.updateData({ restaurantId: restaurantId, offerId }, { isActive: true, offerStatus: "Active" });
                 return reply.code(200).send({
                     success: true,
                     message: `Offer is now Activated`,
-                    data: replyult
+                    data: result
                 });
             }
           
@@ -291,29 +291,29 @@ const offerController = {
 
     addOfferCategory: async (request, reply) => {
         try {
-            const { replytaurantId } = request.params;
+            const { restaurantId } = request.params;
             const { name } = request.body;
 
-            if (!replytaurantId) {
+            if (!restaurantId) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Branch ID is requestuired"
+                    message: "Branch ID is required"
                 });
             }
 
             if (!name) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Category name is requestuired"
+                    message: "Category name is required"
                 });
             }
 
-            const replyult = await OfferService.addCategory(replytaurantId, name);
+            const result = await OfferService.addCategory(restaurantId, name);
 
             return reply.code(201).send({
                 success: true,
                 message: "Category added successfully",
-                data: replyult
+                data: result
             });
         } catch (error) {
             console.error(error.message);

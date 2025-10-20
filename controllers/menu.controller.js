@@ -1,6 +1,6 @@
 "use strict";
 import MenuService from "../services/menuServices.js";
-
+import { v4 as uuidv4 } from "uuid";
 
 // Rest of your controller code...
 
@@ -65,7 +65,7 @@ const menuController = {
       if (!restaurantId || !name || !type || !category || !pricing_unit || !pricing_options) {
         return reply.code(400).send({ success: false, message: "One or more filed names are not defined" });
      }
-     // don't include portions in requestuired check
+     // don't include portions in required check
      
       let data = await MenuService.addData({
         restaurantId,
@@ -213,7 +213,7 @@ const menuController = {
       if (!branchId || !itemId) {
         return reply.code(400).send({
           success: false,
-          message: "Branch ID and Item ID are requestuired"
+          message: "Branch ID and Item ID are required"
         });
       }
 
@@ -250,14 +250,14 @@ const menuController = {
       if (!branchId) {
         return reply.code(400).send({
           success: false,
-          message: "Branch ID is requestuired"
+          message: "Branch ID is required"
         });
       }
 
       if (!name) {
         return reply.code(400).send({
           success: false,
-          message: "Category name is requestuired"
+          message: "Category name is required"
         });
       }
 
@@ -300,7 +300,7 @@ const menuController = {
     if (!query || query.trim() === "") {
       return reply.code(400).send({
         success: 0,
-        message: "Search query is requestuired.",
+        message: "Search query is required.",
       });
     }
 
