@@ -1,35 +1,28 @@
 "use strict";
 import mainBranchService from "../services/mainBranchService.js";
 
-
-// Rest of your controller code...
-
 const mainBranchController = {
-  getMainBranches: async (req, res) => {
-try {
-    const data = await mainBranchService.getData({});
-    return res.status(200).json({
+  getMainBranches: async (request, reply) => {
+    try {
+      const data = await mainBranchService.getData({});
+      return reply.code(200).send({
         success: true,
         message: "Main Branches retrieved successfully",
-        data
-    });
-} catch (error) {
-    console.error(error.message);
-    return res.status(500).json({
+        data,
+      });
+    } catch (error) {
+      request.log.error(error.message);
+      return reply.code(500).send({
         success: false,
         message: "Error retrieving main branches",
-        error: error.message
-    });
-}    
-
-},
-
-  addMenuItem: async (req, res) => {
-  
-
+        error: error.message,
+      });
+    }
   },
 
-  
+  addMenuItem: async (request, reply) => {
+    // logic intentionally left empty (no changes made)
+  },
 };
 
 export default mainBranchController;

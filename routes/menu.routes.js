@@ -1,10 +1,10 @@
 import menuController from "../controllers/menu.controller.js";
 
-/**
- * Fastify plugin for menu routes
- * @param {import('fastify').FastifyInstance} fastify
- * @param {*} options
- */
+// /**
+//  * Fastify plugin for menu routes
+//  * @param {import('fastify').FastifyInstance} fastify
+//  * @param {*} options
+//  */
 async function menuRoutes(fastify, options) {
 
   // Get all menu items for a branch
@@ -17,7 +17,7 @@ async function menuRoutes(fastify, options) {
   fastify.put("/updateitems/:restaurantId/:itemId", menuController.updateMenuItem);
 
   // Add a new menu item
-  fastify.post("/add-menu-item", menuController.addMenuItem);
+  fastify.post("/add", menuController.addMenuItem);
 
   // Delete a menu item
   fastify.delete("/deleteitems/:restaurantId/:itemId", menuController.deleteMenuItem);

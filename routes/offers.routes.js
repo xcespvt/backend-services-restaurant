@@ -2,11 +2,11 @@
 
 import offerController from "../controllers/offer.controller.js";
 
-/**
- * Fastify plugin for offer routes
- * @param {import('fastify').FastifyInstance} fastify
- * @param {*} options
- */
+// /**
+//  * Fastify plugin for offer routes
+//  * @param {import('fastify').FastifyInstance} fastify
+//  * @param {*} options
+//  */
 async function offersRoutes(fastify, options) {
   // 🧾 Get all offers
   fastify.get("/offers/:restaurantId", offerController.getOffers);

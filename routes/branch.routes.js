@@ -1,31 +1,18 @@
 "use strict";
 
-import express from "express";
 import branchController from "../controllers/branch.controller.js";
 import mainBranchController from "../controllers/mainBranch.controller.js";
 
-const router = express.Router();
+async function branchRoutes(fastify) {
+  // Branch routes
+  fastify.get("/", branchController.getAllBranches);
+  fastify.post("/", branchController.addBranch);
+  fastify.put("/:branchId", branchController.updateBranch);
+  fastify.delete("/:branchId", branchController.deleteBranch);
+  fastify.patch("/:branchId/toggle-online", branchController.toggleBranchOnlineStatus);
 
-// Get all branches for a user
-router.get("/", branchController.getAllBranches);
+  // Main branch routes
+  fastify.get("/mainbranch", mainBranchController.getMainBranches);
+}
 
-// Add a new branch
-router.post("/", branchController.addBranch);
-
-// Update a branch
-router.put("/:branchId", branchController.updateBranch);
-
-// Delete a branch
-router.delete("/:branchId", branchController.deleteBranch);
-
-// Toggle branch online status
-router.patch("/:branchId/toggle-online", branchController.toggleBranchOnlineStatus);
-
-
-
-//main branch routes goes here
-
-
-router.get("/mainbranch", mainBranchController.getMainBranches);
-
-export default router;
+export default branchRoutes;
