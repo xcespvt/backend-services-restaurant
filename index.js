@@ -1,7 +1,12 @@
 import Fastify from 'fastify';
-import helmet from 'helmet';
-import cors from 'cors';
-import compress from 'compression';
+
+
+import helmet from '@fastify/helmet';
+import cors from '@fastify/cors';
+import compression from 'compression';
+
+
+
 
 // 🧠 Import DB functions
 import { connectDB, testConnection } from './config/db.js';
@@ -20,14 +25,14 @@ import settingRoutes from './routes/setting.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import offersRoutes from './routes/offers.routes.js';
 
-// 🚀 Initialize Fastify app
-const app = Fastify({ logger: true });
+
+const app = Fastify({ logger: false });
 const port = process.env.PORT || 3000;
 
-// 🧩 Register global middleware (plugins)
-await app.register(helmet);
-await app.register(cors);
-await app.register(compress);
+
+app.register(helmet);
+app.register(cors);
+app.register(compression());
 
 // 📦 Register route modules with prefixes
 app.register(restaurantRoutes, { prefix: '/restaurant' });
@@ -43,7 +48,6 @@ app.register(settingRoutes, { prefix: '/api/settings' });
 app.register(analyticsRoutes, { prefix: '/api/analytics' });
 app.register(offersRoutes, { prefix: '/api/offers' });
 
-// 🌐 Root route
 app.get('/', async (req, reply) => {
   return {
     message: 'Welcome to XCES Restaurant Management System API',
