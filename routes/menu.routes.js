@@ -17,7 +17,7 @@ async function menuRoutes(fastify, options) {
   fastify.put("/updateitems/:restaurantId/:itemId", menuController.updateMenuItem);
 
   // Add a new menu item
-  fastify.post("/add", menuController.addMenuItem);
+  fastify.post("/add-menu-item", menuController.addMenuItem);
 
   // Delete a menu item
   fastify.delete("/deleteitems/:restaurantId/:itemId", menuController.deleteMenuItem);
