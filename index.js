@@ -31,7 +31,11 @@ const port = process.env.PORT || 3000;
 
 
 app.register(helmet);
-app.register(cors);
+app.register(cors, { 
+  origin: '*', // Allow requests from all origins
+  methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+  credentials: true
+});
 app.register(compression());
 
 // 📦 Register route modules with prefixes
