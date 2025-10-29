@@ -296,18 +296,40 @@ const menuController = {
       });
     }
 
-    const { query } = request.query; // e.g. /api/menu/search?query=pizza
-    if (!query || query.trim() === "") {
+    let { query, category } = request.query; // e.g. /api/menu/search?query=pizza&category=Pizza
+    
+    // Remove quotation marks if present
+    if (query && typeof query === 'string') {
+      query = query.replace(/^"(.*)"$/, '$1');
+    }
+    
+    if (category && typeof category === 'string') {
+      category = category.replace(/^"(.*)"$/, '$1');
+    }
+    
+    // Initialize filter with restaurant ID
+    let filter = { restaurantId: { $eq: restaurantId } };
+    
+    // Add text search if query is provided
+    if (query && query.trim() !== "") {
+      filter.$text = { $search: query };
+    }
+    
+    // Add category filter if category is provided and not "NA"
+    if (category && category.trim() !== "" && category !== "NA") {
+      filter.category = category;
+    }
+    
+    // If neither query nor valid category is provided, return error
+    if ((!query || query.trim() === "") && (!category || category === "NA")) {
       return reply.code(400).send({
         success: 0,
-        message: "Search query is required.",
+        message: "Search query or valid category is required.",
       });
     }
 
-    // Ensure text index exists on `name` field (recommended to add in schema: MenuItemSchema.index({ name: "text" }))
-    const filter = { restaurantId: { $eq: restaurantId }, $text: { $search: query } };
     const select = { _id: 0, name: 1, description: 1, category: 1, images: 1 };
-
+    
     const data = await MenuService.getData(filter, select);
 
     if(!data || data.length === 0){
