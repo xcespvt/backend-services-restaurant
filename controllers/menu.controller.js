@@ -1,10 +1,60 @@
 "use strict";
 import MenuService from "../services/menuServices.js";
 import { v4 as uuidv4 } from "uuid";
-
-// Rest of your controller code...
+import fetch from 'node-fetch';
+import FormData from 'form-data';
+import fs from 'fs';
 
 const menuController = {
+  // Upload image directly to Cloudflare
+  uploadImageToCloudflare: async (request, reply) => {
+    try {
+      if (!request.file) {
+        return reply.code(400).send({
+          success: 0,
+          message: "No image file provided"
+        });
+      }
+
+      const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+      const apiToken = process.env.IMAGE_API_TOKEN;
+      const cloudflareUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`;
+      
+      const formData = new FormData();
+      formData.append('file', fs.createReadStream(request.file.path));
+      
+      const response = await fetch(cloudflareUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiToken}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      
+      // Clean up the temporary file
+      fs.unlinkSync(request.file.path);
+      
+      if (!data.success) {
+        throw new Error(data.errors?.[0]?.message || 'Failed to upload image to Cloudflare');
+      }
+      
+      return reply.code(200).send({
+        success: 1,
+        message: "Image uploaded successfully",
+        imageId: data.result.id,
+        variants: data.result.variants
+      });
+    } catch (error) {
+      console.error("Image upload error:", error);
+      return reply.code(500).send({
+        success: 0,
+        message: "Server error while uploading image",
+        error: error.message
+      });
+    }
+  },
   getMenuItems: async (request, reply) => {
     try {
       const { restaurantId } = request.params;

@@ -1,5 +1,5 @@
 import Fastify from 'fastify';
-
+import fastifyMultipart from "@fastify/multipart";
 
 import helmet from '@fastify/helmet';
 import cors from '@fastify/cors';
@@ -38,6 +38,8 @@ app.register(cors, {
 });
 app.register(compression());
 
+// Allow multipart form-data
+app.register(fastifyMultipart);
 // 📦 Register route modules with prefixes
 app.register(restaurantRoutes, { prefix: '/restaurant' });
 app.register(authRoutes, { prefix: '/api/auth' });
