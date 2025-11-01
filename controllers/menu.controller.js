@@ -38,7 +38,8 @@ const menuController = {
   deleteCloudflareImage: async (request, reply) => {
     try {
       const { imageUrl } = request.body;
-      
+      const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+      const apiToken = process.env.IMAGE_API_TOKEN;
       if (!imageUrl) {
         return reply.code(400).send({
           success: 0,
@@ -57,9 +58,6 @@ const menuController = {
           message: "Invalid image URL format"
         });
       }
-      
-      const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-      const apiToken = process.env.IMAGE_API_TOKEN;
       const cloudflareUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1/${imageId}`;
       
       const response = await fetch(cloudflareUrl, {
