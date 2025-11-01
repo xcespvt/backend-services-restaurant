@@ -4,35 +4,47 @@ import { v4 as uuidv4 } from "uuid";
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import fs from 'fs';
+import multer from "multer";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+// Get current file's directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = join(__dirname, "../uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configure multer for file uploads
+const upload = multer({ 
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, uploadsDir);
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
+    }
+  }),
+  limits: {
+    fileSize: 1 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only images
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"), false);
+    }
+  }
+});
 
 const menuController = {
   // Handle image upload with multer
-  handleImageUpload: (request, reply, done) => {
-    // Process the upload with multer
-    const upload = request.uploadHandler;
-    upload.single('image')(request.raw, reply.raw, (err) => {
-      if (err) {
-        if (err.code === 'LIMIT_FILE_SIZE') {
-          reply.code(400).send({
-            success: 0,
-            message: "File size exceeds the 1MB limit"
-          });
-          return;
-        }
-        reply.code(400).send({
-          success: 0,
-          message: err.message || "Error processing file upload"
-        });
-        return;
-      }
-      
-      // Make the file available in the request object for the controller
-      if (request.raw.file) {
-        request.file = request.raw.file;
-      }
-      done();
-    });
-  },
+  handleImageUpload: upload.single('image'),
   
   // Delete image from Cloudflare
   deleteCloudflareImage: async (request, reply) => {
@@ -88,51 +100,78 @@ const menuController = {
   },
 
   // Upload image directly to Cloudflare
-  uploadImageToCloudflare: async (request, reply) => {
+ uploadImageToCloudflare: async (request, reply) => {
     try {
-      if (!request.file) {
+      const parts = request.parts(); // Fastify multipart iterator
+      let uploadedFilePath = null;
+      let fileName = null;
+
+      for await (const part of parts) {
+        if (part.file) {
+          fileName = part.filename;
+          uploadedFilePath = join(uploadsDir, `${Date.now()}-${fileName}`);
+
+          // Save file locally
+          await fs.promises.writeFile(uploadedFilePath, await part.toBuffer());
+        }
+      }
+
+      if (!uploadedFilePath) {
         return reply.code(400).send({
           success: 0,
-          message: "No image file provided"
+          message: "No image file provided",
         });
       }
 
+      // Upload to Cloudflare
       const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
       const apiToken = process.env.IMAGE_API_TOKEN;
+
+      if (!accountId || !apiToken) {
+        return reply.code(500).send({
+          success: 0,
+          message: "Cloudflare credentials not configured",
+        });
+      }
+
       const cloudflareUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`;
-      
+
       const formData = new FormData();
-      formData.append('file', fs.createReadStream(request.file.path));
-      
+      formData.append("file", fs.createReadStream(uploadedFilePath));
+
       const response = await fetch(cloudflareUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${apiToken}`
+          Authorization: `Bearer ${apiToken}`,
         },
-        body: formData
+        body: formData,
       });
 
       const data = await response.json();
-      
-      // Clean up the temporary file
-      fs.unlinkSync(request.file.path);
-      
-      if (!data.success) {
-        throw new Error(data.errors?.[0]?.message || 'Failed to upload image to Cloudflare');
+
+      // Cleanup local file
+      try {
+        if (fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
+      } catch (cleanupErr) {
+        console.error("Cleanup error:", cleanupErr);
       }
-      
+
+      if (!data.success) {
+        throw new Error(data.errors?.[0]?.message || "Cloudflare upload failed");
+      }
+
       return reply.code(200).send({
         success: 1,
         message: "Image uploaded successfully",
         imageId: data.result.id,
-        variants: data.result.variants
+        variants: data.result.variants,
       });
     } catch (error) {
       console.error("Image upload error:", error);
       return reply.code(500).send({
         success: 0,
-        message: "Server error while uploading image",
-        error: error.message
+        message: "Server error during image upload",
+        error: error.message,
       });
     }
   },
