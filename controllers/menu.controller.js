@@ -6,6 +6,89 @@ import FormData from 'form-data';
 import fs from 'fs';
 
 const menuController = {
+  // Handle image upload with multer
+  handleImageUpload: (request, reply, done) => {
+    // Process the upload with multer
+    const upload = request.uploadHandler;
+    upload.single('image')(request.raw, reply.raw, (err) => {
+      if (err) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          reply.code(400).send({
+            success: 0,
+            message: "File size exceeds the 1MB limit"
+          });
+          return;
+        }
+        reply.code(400).send({
+          success: 0,
+          message: err.message || "Error processing file upload"
+        });
+        return;
+      }
+      
+      // Make the file available in the request object for the controller
+      if (request.raw.file) {
+        request.file = request.raw.file;
+      }
+      done();
+    });
+  },
+  
+  // Delete image from Cloudflare
+  deleteCloudflareImage: async (request, reply) => {
+    try {
+      const { imageUrl } = request.body;
+      
+      if (!imageUrl) {
+        return reply.code(400).send({
+          success: 0,
+          message: "Image URL is required"
+        });
+      }
+      
+      // Extract image ID from URL
+      // URL format: https://imagedelivery.net/guQWSg-jb8gZbMVNCQh-GA/2531a00b-0dc7-4ab7-57e2-19b63a6eb200/public
+      const urlParts = imageUrl.split('/');
+      const imageId = urlParts[urlParts.length - 2];
+      
+      if (!imageId) {
+        return reply.code(400).send({
+          success: 0,
+          message: "Invalid image URL format"
+        });
+      }
+      
+      const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+      const apiToken = process.env.IMAGE_API_TOKEN;
+      const cloudflareUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1/${imageId}`;
+      
+      const response = await fetch(cloudflareUrl, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${apiToken}`
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.errors?.[0]?.message || 'Failed to delete image from Cloudflare');
+      }
+      
+      return reply.code(200).send({
+        success: 1,
+        message: "Image deleted successfully"
+      });
+    } catch (error) {
+      console.error("Image deletion error:", error);
+      return reply.code(500).send({
+        success: 0,
+        message: "Server error while deleting image",
+        error: error.message
+      });
+    }
+  },
+
   // Upload image directly to Cloudflare
   uploadImageToCloudflare: async (request, reply) => {
     try {
