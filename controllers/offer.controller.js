@@ -7,45 +7,45 @@ import { v4 as uuidv4 } from "uuid";
 const offerController = {
     getOffers: async (request, reply) => {
         try {
-        const { restaurantId } = request.params;
-      const page = Number(request.query.page); // Default to page 1
-      const limit = Number(request.query.limit); // Default to 10 items per page
-      const skip = (page - 1) * limit;
+            const { restaurantId } = request.params;
+            const page = Number(request.query.page); // Default to page 1
+            const limit = Number(request.query.limit); // Default to 10 items per page
+            const skip = (page - 1) * limit;
 
-      if(page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !restaurantId || !page || !limit){
-        return reply.code(400).send({
-          success: false,
-          message: "Invalid requestuest"
-        });
-      }
+            if (page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !restaurantId || !page || !limit) {
+                return reply.code(400).send({
+                    success: false,
+                    message: "Invalid requestuest"
+                });
+            }
 
-      // Get total count for pagination metadata
-      const totalItems = await OfferService.getCountDocument({ restaurantId: restaurantId });
-      const totalPages = Math.ceil(totalItems / limit);
+            // Get total count for pagination metadata
+            const totalItems = await OfferService.getCountDocument({ restaurantId: restaurantId });
+            const totalPages = Math.ceil(totalItems / limit);
 
-      const offers = await OfferService.getData(
-        { restaurantId: restaurantId },  // filter
-        { _id: 0 },                   // select
-        {},                           // sort
-        skip,                            // skip
-        limit                             // limit
-      );
+            const offers = await OfferService.getData(
+                { restaurantId: restaurantId },  // filter
+                { _id: 0 },                   // select
+                {},                           // sort
+                skip,                            // skip
+                limit                             // limit
+            );
 
 
-      return reply.code(200).send({
-        success: true,
-        message: "Offers retrieved successfully",
-        data: offers,
-        pagination: {
-          currentPage: page,
-          itemsPerPage: limit,
-          totalItems,
-          totalPages,
-          hasNextPage: page < totalPages,
-          hasPreviousPage: page > 1
-        }
-      });
-    }  catch (error) {
+            return reply.code(200).send({
+                success: true,
+                message: "Offers retrieved successfully",
+                data: offers,
+                pagination: {
+                    currentPage: page,
+                    itemsPerPage: limit,
+                    totalItems,
+                    totalPages,
+                    hasNextPage: page < totalPages,
+                    hasPreviousPage: page > 1
+                }
+            });
+        } catch (error) {
             console.error(error.message);
 
             return reply.code(500).send({
@@ -54,12 +54,13 @@ const offerController = {
                 error: error.message
             });
         }
-    },  
+    },
 
     addOffers: async (request, reply) => {
         try {
             const {
                 restaurantId,
+                couponCode,
                 offerTitle,
                 description,
                 offerType,
@@ -141,6 +142,7 @@ const offerController = {
             // Create new offer
             const newOffer = await OfferService.addData({
                 restaurantId,
+                couponCode,
                 offerId: uuidv4(),
                 offerTitle,
                 description,
@@ -174,38 +176,128 @@ const offerController = {
         try {
             const { restaurantId, offerId } = request.params;
             const itemData = request.body;
-
+            delete itemData.restaurantId;
+            // Basic validations
             if (!restaurantId || !offerId) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Invalid Request"
+                    message: "Restaurant ID and Offer ID are required",
                 });
             }
 
-            const offer = await OfferService.updateData({ restaurantId, offerId, itemData });
+            // Fetch existing offer (optional if needed for merge)
+            const existingOffer = await OfferService.getData({ restaurantId, offerId });
+            if (!existingOffer) {
+                return reply.code(404).send({
+                    success: false,
+                    message: "Offer not found",
+                });
+            }
+
+            const {
+                offerType = existingOffer.offerType,
+                discountPercentage,
+                discountAmount,
+                freeItem,
+                bogoItems,
+                happyHourTiming,
+                validUntil,
+            } = itemData;
+
+
+            if (offerType === "Percentage Discount") {
+                if (discountPercentage === undefined || discountPercentage === null) {
+                    return reply.code(400).send({
+                        success: false,
+                        message: "Discount percentage is required for Percentage Discount offers",
+                    });
+                }
+                if (discountPercentage <= 0 || discountPercentage > 100) {
+                    return reply.code(400).send({
+                        success: false,
+                        message: "Discount percentage must be between 1 and 100",
+                    });
+                }
+            }
+
+            if (offerType === "Flat Discount") {
+                if (discountAmount === undefined || discountAmount === null) {
+                    return reply.code(400).send({
+                        success: false,
+                        message: "Discount amount is required for Flat Discount offers",
+                    });
+                }
+                if (discountAmount <= 0) {
+                    return reply.code(400).send({
+                        success: false,
+                        message: "Discount amount must be greater than 0",
+                    });
+                }
+            }
+
+            if (offerType === "Free Item" && !freeItem) {
+                return reply.code(400).send({
+                    success: false,
+                    message: "Free item must be provided for Free Item offers",
+                });
+            }
+
+            if (offerType === "Buy-One-Get-One (BOGO)" && !bogoItems) {
+                return reply.code(400).send({
+                    success: false,
+                    message: "BOGO items must be provided for Buy-One-Get-One offers",
+                });
+            }
+
+            if (offerType === "Happy Hour") {
+                if (
+                    !happyHourTiming ||
+                    !happyHourTiming.startTime ||
+                    !happyHourTiming.endTime
+                ) {
+                    return reply.code(400).send({
+                        success: false,
+                        message: "Happy Hour start and end times are required",
+                    });
+                }
+            }
+
+            // Validate validUntil if present
+            if (validUntil && isNaN(new Date(validUntil))) {
+                return reply.code(400).send({
+                    success: false,
+                    message: "Invalid validUntil date format",
+                });
+            }
+
+            // Prepare update payload
+            const updatedOfferData = {
+                ...itemData,
+                validUntil: validUntil ? new Date(validUntil) : existingOffer.validUntil,
+            };
+
+            // Update the offer
+            const updatedOffer = await OfferService.updateData(
+                { restaurantId, offerId },
+                { $set: updatedOfferData }
+            );
 
             return reply.code(200).send({
                 success: true,
                 message: "Offer updated successfully",
-                data: offer
+                data: updatedOffer,
             });
         } catch (error) {
-            console.error(error.message);
-
-            if (error.message === "Menu item not found") {
-                return reply.code(404).send({
-                    success: false,
-                    message: "Menu item not found"
-                });
-            }
+            console.error("Error updating offer:", error.message);
 
             return reply.code(500).send({
                 success: false,
-                message: "Error updating menu item",
-                error: error.message
+                message: "Error updating offer",
+                error: error.message,
             });
         }
     },
+
 
     deleteOffers: async (request, reply) => {
         try {
@@ -246,7 +338,7 @@ const offerController = {
 
         try {
             const { restaurantId, offerId } = request.params;
-            const { status } = request.body;  
+            const { status } = request.body;
             if (!restaurantId || !offerId) {
                 return reply.code(400).send({
                     success: false,
@@ -262,7 +354,7 @@ const offerController = {
                     data: result
                 });
             }
-            if (status === "Activate"){
+            if (status === "Activate") {
                 const result = await OfferService.updateData({ restaurantId: restaurantId, offerId }, { isActive: true, offerStatus: "Active" });
                 return reply.code(200).send({
                     success: true,
@@ -270,7 +362,7 @@ const offerController = {
                     data: result
                 });
             }
-          
+
         } catch (error) {
             console.error(error.message);
 

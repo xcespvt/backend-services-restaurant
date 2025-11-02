@@ -30,7 +30,7 @@ const upload = multer({
     }
   }),
   limits: {
-    fileSize: 1 * 1024 * 1024 // 5MB limit
+    fileSize: 1 * 1024 * 1024 // 1MB limit
   },
   fileFilter: (req, file, cb) => {
     // Accept only images
@@ -60,7 +60,7 @@ const menuController = {
       }
       
       // Extract image ID from URL
-      // URL format: https://imagedelivery.net/guQWSg-jb8gZbMVNCQh-GA/2531a00b-0dc7-4ab7-57e2-19b63a6eb200/public
+      
       const urlParts = imageUrl.split('/');
       const imageId = urlParts[urlParts.length - 2];
       

@@ -6,6 +6,10 @@ const Offer = new mongoose.Schema(
       type : "string",
       required : true
     },
+    couponCode:{
+      type : "string",
+      required : true
+    },
     offerId:{
       type : "string",
       required : true
