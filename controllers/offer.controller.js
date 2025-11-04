@@ -172,131 +172,274 @@ const offerController = {
         }
     },
 
-    updateOffers: async (request, reply) => {
-        try {
-            const { restaurantId, offerId } = request.params;
-            const itemData = request.body;
-            delete itemData.restaurantId;
-            // Basic validations
-            if (!restaurantId || !offerId) {
-                return reply.code(400).send({
-                    success: false,
-                    message: "Restaurant ID and Offer ID are required",
-                });
-            }
+    // updateOffers: async (request, reply) => {
+    //     try {
+    //         const { restaurantId, offerId } = request.params;
+    //         const itemData = request.body;
+    //         delete itemData.restaurantId;
+    //         // Basic validations
+    //         if (!restaurantId || !offerId) {
+    //             return reply.code(400).send({
+    //                 success: false,
+    //                 message: "Restaurant ID and Offer ID are required",
+    //             });
+    //         }
 
-            // Fetch existing offer (optional if needed for merge)
-            const existingOffer = await OfferService.getData({ restaurantId, offerId });
-            if (!existingOffer) {
-                return reply.code(404).send({
-                    success: false,
-                    message: "Offer not found",
-                });
-            }
+    //         // Fetch existing offer (optional if needed for merge)
+    //         const existingOffer = await OfferService.getData({ restaurantId, offerId });
+    //         if (!existingOffer) {
+    //             return reply.code(404).send({
+    //                 success: false,
+    //                 message: "Offer not found",
+    //             });
+    //         }
 
-            const {
-                offerType = existingOffer.offerType,
-                discountPercentage,
-                discountAmount,
-                freeItem,
-                bogoItems,
-                happyHourTiming,
-                validUntil,
-            } = itemData;
+    //         const {
+    //             offerType = existingOffer.offerType,
+    //             discountPercentage,
+    //             discountAmount,
+    //             freeItem,
+    //             bogoItems,
+    //             happyHourTiming,
+    //             validUntil,
+    //         } = itemData;
 
 
-            if (offerType === "Percentage Discount") {
-                if (discountPercentage === undefined || discountPercentage === null) {
-                    return reply.code(400).send({
-                        success: false,
-                        message: "Discount percentage is required for Percentage Discount offers",
-                    });
-                }
-                if (discountPercentage <= 0 || discountPercentage > 100) {
-                    return reply.code(400).send({
-                        success: false,
-                        message: "Discount percentage must be between 1 and 100",
-                    });
-                }
-            }
+    //         if (offerType === "Percentage Discount") {
+    //             if (discountPercentage === undefined || discountPercentage === null) {
+    //                 return reply.code(400).send({
+    //                     success: false,
+    //                     message: "Discount percentage is required for Percentage Discount offers",
+    //                 });
+    //             }
+    //             if (discountPercentage <= 0 || discountPercentage > 100) {
+    //                 return reply.code(400).send({
+    //                     success: false,
+    //                     message: "Discount percentage must be between 1 and 100",
+    //                 });
+    //             }
+    //         }
 
-            if (offerType === "Flat Discount") {
-                if (discountAmount === undefined || discountAmount === null) {
-                    return reply.code(400).send({
-                        success: false,
-                        message: "Discount amount is required for Flat Discount offers",
-                    });
-                }
-                if (discountAmount <= 0) {
-                    return reply.code(400).send({
-                        success: false,
-                        message: "Discount amount must be greater than 0",
-                    });
-                }
-            }
+    //         if (offerType === "Flat Discount") {
+    //             if (discountAmount === undefined || discountAmount === null) {
+    //                 return reply.code(400).send({
+    //                     success: false,
+    //                     message: "Discount amount is required for Flat Discount offers",
+    //                 });
+    //             }
+    //             if (discountAmount <= 0) {
+    //                 return reply.code(400).send({
+    //                     success: false,
+    //                     message: "Discount amount must be greater than 0",
+    //                 });
+    //             }
+    //         }
 
-            if (offerType === "Free Item" && !freeItem) {
-                return reply.code(400).send({
-                    success: false,
-                    message: "Free item must be provided for Free Item offers",
-                });
-            }
+    //         if (offerType === "Free Item" && !freeItem) {
+    //             return reply.code(400).send({
+    //                 success: false,
+    //                 message: "Free item must be provided for Free Item offers",
+    //             });
+    //         }
 
-            if (offerType === "Buy-One-Get-One (BOGO)" && !bogoItems) {
-                return reply.code(400).send({
-                    success: false,
-                    message: "BOGO items must be provided for Buy-One-Get-One offers",
-                });
-            }
+    //         if (offerType === "Buy-One-Get-One (BOGO)" && !bogoItems) {
+    //             return reply.code(400).send({
+    //                 success: false,
+    //                 message: "BOGO items must be provided for Buy-One-Get-One offers",
+    //             });
+    //         }
 
-            if (offerType === "Happy Hour") {
-                if (
-                    !happyHourTiming ||
-                    !happyHourTiming.startTime ||
-                    !happyHourTiming.endTime
-                ) {
-                    return reply.code(400).send({
-                        success: false,
-                        message: "Happy Hour start and end times are required",
-                    });
-                }
-            }
+    //         if (offerType === "Happy Hour") {
+    //             if (
+    //                 !happyHourTiming ||
+    //                 !happyHourTiming.startTime ||
+    //                 !happyHourTiming.endTime
+    //             ) {
+    //                 return reply.code(400).send({
+    //                     success: false,
+    //                     message: "Happy Hour start and end times are required",
+    //                 });
+    //             }
+    //         }
 
-            // Validate validUntil if present
-            if (validUntil && isNaN(new Date(validUntil))) {
-                return reply.code(400).send({
-                    success: false,
-                    message: "Invalid validUntil date format",
-                });
-            }
+    //         // Validate validUntil if present
+    //         if (validUntil && isNaN(new Date(validUntil))) {
+    //             return reply.code(400).send({
+    //                 success: false,
+    //                 message: "Invalid validUntil date format",
+    //             });
+    //         }
 
-            // Prepare update payload
-            const updatedOfferData = {
-                ...itemData,
-                validUntil: validUntil ? new Date(validUntil) : existingOffer.validUntil,
-            };
+    //         // Prepare update payload
+    //         const updatedOfferData = {
+    //             ...itemData,
+    //             validUntil: validUntil ? new Date(validUntil) : existingOffer.validUntil,
+    //         };
 
-            // Update the offer
-            const updatedOffer = await OfferService.updateData(
-                { restaurantId, offerId },
-                { $set: updatedOfferData }
-            );
+    //         // Update the offer
+    //         const updatedOffer = await OfferService.updateData(
+    //             { restaurantId, offerId },
+    //             { $set: updatedOfferData, new: true, overwrite: true }
+    //         );
 
-            return reply.code(200).send({
-                success: true,
-                message: "Offer updated successfully",
-                data: updatedOffer,
-            });
-        } catch (error) {
-            console.error("Error updating offer:", error.message);
+    //         return reply.code(200).send({
+    //             success: true,
+    //             message: "Offer updated successfully",
+    //             data: updatedOffer,
+    //         });
+    //     } catch (error) {
+    //         console.error("Error updating offer:", error.message);
 
-            return reply.code(500).send({
-                success: false,
-                message: "Error updating offer",
-                error: error.message,
-            });
-        }
-    },
+    //         return reply.code(500).send({
+    //             success: false,
+    //             message: "Error updating offer",
+    //             error: error.message,
+    //         });
+    //     }
+    // },
+updateOffers: async (request, reply) => {
+  try {
+    const { restaurantId, offerId } = request.params;
+    const itemData = request.body;
+    delete itemData.restaurantId;
+
+    // Basic validation
+    if (!restaurantId || !offerId) {
+      return reply.code(400).send({
+        success: false,
+        message: "Restaurant ID and Offer ID are required",
+      });
+    }
+
+    // Check existing offer
+    const existingOffer = await OfferService.getData({ restaurantId, offerId });
+    if (!existingOffer) {
+      return reply.code(404).send({
+        success: false,
+        message: "Offer not found",
+      });
+    }
+
+    // Extract core fields
+    const {
+      offerType = existingOffer.offerType,
+      discountPercentage,
+      discountAmount,
+      freeItem,
+      bogoItems,
+      happyHourTiming,
+      validUntil,
+    } = itemData;
+
+    // --- Validation rules ---
+    if (offerType === "Percentage Discount") {
+      if (discountPercentage == null)
+        return reply.code(400).send({
+          success: false,
+          message: "Discount percentage is required for Percentage Discount offers",
+        });
+      if (discountPercentage <= 0 || discountPercentage > 100)
+        return reply.code(400).send({
+          success: false,
+          message: "Discount percentage must be between 1 and 100",
+        });
+    }
+
+    if (offerType === "Flat Discount") {
+      if (discountAmount == null)
+        return reply.code(400).send({
+          success: false,
+          message: "Discount amount is required for Flat Discount offers",
+        });
+      if (discountAmount <= 0)
+        return reply.code(400).send({
+          success: false,
+          message: "Discount amount must be greater than 0",
+        });
+    }
+
+    if (offerType === "Free Item" && !freeItem)
+      return reply.code(400).send({
+        success: false,
+        message: "Free item must be provided for Free Item offers",
+      });
+
+    if (offerType === "Buy-One-Get-One (BOGO)" && !bogoItems)
+      return reply.code(400).send({
+        success: false,
+        message: "BOGO items must be provided for Buy-One-Get-One offers",
+      });
+
+    if (offerType === "Happy Hour") {
+      if (!happyHourTiming?.startTime || !happyHourTiming?.endTime)
+        return reply.code(400).send({
+          success: false,
+          message: "Happy Hour start and end times are required",
+        });
+    }
+
+    if (validUntil && isNaN(new Date(validUntil)))
+      return reply.code(400).send({
+        success: false,
+        message: "Invalid validUntil date format",
+      });
+
+    // --- Clean up irrelevant fields based on offerType ---
+    const validFieldsByType = {
+      "Percentage Discount": ["offerType", "discountPercentage", "validUntil"],
+      "Flat Discount": ["offerType", "discountAmount", "validUntil"],
+      "Free Item": ["offerType", "freeItem", "validUntil"],
+      "Buy-One-Get-One (BOGO)": ["offerType", "bogoItems", "validUntil"],
+      "Happy Hour": ["offerType", "happyHourTiming", "validUntil"],
+    };
+
+    const allOfferFields = [
+      "discountPercentage",
+      "discountAmount",
+      "freeItem",
+      "bogoItems",
+      "happyHourTiming",
+    ];
+
+    const validFields = validFieldsByType[offerType] || [];
+    const fieldsToUnset = allOfferFields.filter(
+      (field) => !validFields.includes(field)
+    );
+
+    const unsetObj = {};
+    fieldsToUnset.forEach((field) => (unsetObj[field] = 1));
+
+    // Prepare final update data
+    const updatedOfferData = {
+      ...itemData,
+      validUntil: validUntil ? new Date(validUntil) : existingOffer.validUntil,
+      offerType, // ensure offerType is always set
+    };
+
+    // --- Perform atomic DB update ---
+    const updatedOffer = await OfferService.updateData(
+      { restaurantId, offerId },
+      {
+        $unset: unsetObj, // remove old irrelevant fields
+        $set: updatedOfferData, // apply new data
+      },
+      { new: true }
+    );
+
+    return reply.code(200).send({
+      success: true,
+      message: "Offer updated successfully",
+      data: updatedOffer,
+    });
+  } catch (error) {
+    console.error("Error updating offer:", error.message);
+    return reply.code(500).send({
+      success: false,
+      message: "Error updating offer",
+      error: error.message,
+    });
+  }
+},
 
 
     deleteOffers: async (request, reply) => {

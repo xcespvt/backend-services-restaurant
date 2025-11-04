@@ -5,7 +5,7 @@ import DATA_MODEL from "../models/offerModel.js";
 
 const services = {
 
-getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {
+    getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {
         let data = [];
 
         try {
@@ -52,13 +52,13 @@ getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {
         return data;
     },
 
-    updateData: async (findFilter, updateData) => {
+    updateData: async (findFilter, updateData, options = { new: true }) => {
 
         let data = [];
 
         try {
 
-            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, { new: true }).lean();
+            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, options).lean();
 
         } catch (e) {
 
@@ -85,7 +85,7 @@ getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {
 
         return newDoc;
     },
- getCountDocument: async (filter) => {
+    getCountDocument: async (filter) => {
 
         let count = 0;
 
