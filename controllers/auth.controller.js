@@ -1,141 +1,92 @@
 "use strict";
 
-import authService from "../services/authService.js";
+import Otp from "../models/otpModel.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import { sendOtpEmail } from "../services/emailService.js";
 
-const authController = {
-  registerUser: async (req, res) => {
+dotenv.config();
+
+const otpController = {
+  // ✅ Step 1: Request OTP
+  requestOtp: async (request, reply) => {
     try {
-      const userData = req.body;
-      
-      // Validate required fields
-      if (!userData.name || !userData.email || !userData.phone || !userData.password) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Missing required fields" 
+      const { email } = request.body;
+
+      if (!email) {
+        return reply.code(400).send({
+          success: false,
+          message: "Email is required",
         });
       }
-      
-      const result = await authService.registerUser(userData);
-      
-      return res.status(201).json({
+
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+      // Delete old OTP entries for same email
+      await Otp.deleteMany({ email });
+
+      // Save new OTP
+      await Otp.create({ email, otp });
+
+      // Send OTP via email
+      await sendOtpEmail(email, otp);
+
+      return reply.code(200).send({
         success: true,
-        message: "User registered successfully",
-        data: {
-          userId: result.userId,
-          token: result.token,
-          name: result.name,
-          email: result.email,
-          phone: result.phone,
-          whatsapp: result.whatsapp,
-          subscriptionPlan: result.subscriptionPlan
-        }
+        message: "OTP sent successfully to your email",
       });
     } catch (error) {
-      console.error(error.message);
-      
-      if (error.message.includes("duplicate")) {
-        return res.status(409).json({
-          success: false,
-          message: "User already exists with this email or phone"
-        });
-      }
-      
-      return res.status(500).json({
+      console.error("Error generating OTP:", error.message);
+      return reply.code(500).send({
         success: false,
-        message: "Error registering user",
-        error: error.message
+        message: "Internal Server Error",
+        error: error.message,
       });
     }
   },
-  
-  loginUser: async (req, res) => {
+
+  // ✅ Step 2: Verify OTP and issue JWT
+  verifyOtp: async (request, reply) => {
     try {
-      const { email, password } = req.body;
-      
-      // Validate required fields
-      if (!email || !password) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Email and password are required" 
+      const { email, otp } = request.body;
+
+      if (!email || !otp) {
+        return reply.code(400).send({
+          success: false,
+          message: "Email and OTP are required",
         });
       }
-      
-      const result = await authService.loginUser(email, password);
-      
-      return res.status(200).json({
+
+      const record = await Otp.findOne({ email, otp });
+
+      if (!record) {
+        return reply.code(400).send({
+          success: false,
+          message: "Invalid or expired OTP",
+        });
+      }
+
+      // Delete OTP after successful verification
+      await Otp.deleteMany({ email });
+
+      // Generate JWT token (optionally add { expiresIn: "1h" })
+      const token = jwt.sign({ email }, process.env.JWT_SECRET);
+
+      return reply.code(200).send({
         success: true,
-        message: "Login successful",
-        data: {
-          userId: result.userId,
-          token: result.token,
-          name: result.name,
-          email: result.email,
-          phone: result.phone,
-          whatsapp: result.whatsapp,
-          subscriptionPlan: result.subscriptionPlan
-        }
+        message: "OTP verified successfully",
+        token,
       });
     } catch (error) {
-      console.error(error.message);
-      
-      if (error.message === "Invalid credentials") {
-        return res.status(401).json({
-          success: false,
-          message: "Invalid email or password"
-        });
-      }
-      
-      return res.status(500).json({
+      console.error("Error verifying OTP:", error.message);
+      return reply.code(500).send({
         success: false,
-        message: "Error logging in",
-        error: error.message
+        message: "Internal Server Error",
+        error: error.message,
       });
     }
   },
-  
-  loginEmployee: async (req, res) => {
-    try {
-      const { employeeId, password, branchId } = req.body;
-      
-      // Validate required fields
-      if (!employeeId || !password || !branchId) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Employee ID, password, and branch ID are required" 
-        });
-      }
-      
-      const result = await authService.loginEmployee(employeeId, password, branchId);
-      
-      return res.status(200).json({
-        success: true,
-        message: "Login successful",
-        data: {
-          employeeId: result.employeeId,
-          token: result.token,
-          name: result.name,
-          role: result.role,
-          branchId: result.branchId,
-          branchName: result.branchName
-        }
-      });
-    } catch (error) {
-      console.error(error.message);
-      
-      if (error.message === "Invalid credentials") {
-        return res.status(401).json({
-          success: false,
-          message: "Invalid employee ID or password"
-        });
-      }
-      
-      return res.status(500).json({
-        success: false,
-        message: "Error logging in",
-        error: error.message
-      });
-    }
-  }
 };
 
-export default authController;
+export default otpController;

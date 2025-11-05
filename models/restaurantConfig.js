@@ -1,19 +1,6 @@
 'use strict';
 
-import { connectDB } from '../config/db.js';
 import mongoose from 'mongoose';
-
-// Database connection setup
-try {
-    const mongoConnect = await connectDB();
-    if (!mongoConnect) {
-        console.log("Mongo connection error");
-        process.exit(0);
-    }
-} catch (e) {
-    console.error("Database connection error:", e);
-    process.exit(0);
-}
 
 mongoose.set("strictQuery", false);
 const Schema = mongoose.Schema;

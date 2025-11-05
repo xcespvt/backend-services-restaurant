@@ -1,17 +1,13 @@
 "use strict";
 
-import express from "express";
 import authController from "../controllers/auth.controller.js";
 
-const router = express.Router();
+async function authRoutes(fastify, opts) {
 
-// User registration
-router.post("/register", authController.registerUser);
 
-// User login
-router.post("/login", authController.loginUser);
+    fastify.post("/request-otp", authController.requestOtp);
+    fastify.post("/verify-otp", authController.verifyOtp);
 
-// Employee login
-router.post("/employee/login", authController.loginEmployee);
+}
 
-export default router;
+export default authRoutes;

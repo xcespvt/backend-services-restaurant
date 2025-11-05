@@ -51,14 +51,14 @@ app.register(analyticsRoutes, { prefix: "/api/analytics" });
 app.register(offersRoutes, { prefix: "/api/offers" });
 app.register(promotionRoutes, { prefix: "/api/promotions" });
 
-app.get("/", async (req, reply) => {
+app.get("/", async (request, reply) => {
   return {
     message: "Welcome to XCES Restaurant Management System API",
   };
 });
 
 // 🩺 Health check
-app.get("/health", async (req, reply) => {
+app.get("/health", async (req,  reply) => {
   return {
     status: "ok",
     message: "Server is running",
@@ -80,7 +80,7 @@ const initializeApp = async () => {
     await app.listen({ port, host: "0.0.0.0" });
     app.log.info(`🚀 Server is running at http://0.0.0.0:${port}`);
   } catch (error) {
-    app.log.error("❌ Failed to initialize app:", error);
+    console.error("❌ Failed to initialize app:", error);
     process.exit(1);
   }
 };
