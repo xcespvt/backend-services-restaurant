@@ -1,91 +1,31 @@
 'use strict';
 
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 
+mongoose.set("strictQuery", false);
 const Schema = mongoose.Schema;
 
-// Table Schema for Bookings
-const BookingTableSchema = new Schema({
-  id: {
-    type: String,
-    required: true
-  },
-  name: {
-    type: String,
-    required: true
-  },
-  capacity: {
-    type: Number,
-    required: true
-  },
-  status: {
-    type: String,
-    enum: ['Available', 'Reserved', 'Occupied', 'Unavailable'],
-    default: 'Available'
-  }
-}, { _id: false });
+const TableBookingSchema = new Schema({
+    restaurantId: { type: String , index: true,unique: false},
+    tableId: { type: String , index: true,unique: true},
+    name: {
+        type: String,
+        trim: true,
+    },
+    capacity: {
+        type: Number,
+        default: 0,
+    },
+    type:String,
 
-const bookingSchema = new Schema({
-  bookingId: { 
-    type: String,
-    default: () => uuidv4(),
-    unique: true,
-    index: true
-  },
-  branchId: {
-    type: String,
-    required: true,
-    index: true
-  },
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  phone: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  date: {
-    type: String,
-    required: true
-  },
-  time: {
-    type: String,
-    required: true
-  },
-  partySize: {
-    type: Number,
-    required: true,
-    min: 1
-  },
-  status: {
-    type: String,
-    enum: ['Pending', 'Confirmed', 'Cancelled', 'Completed', 'No-Show'],
-    default: 'Confirmed'
-  },
-  tables: {
-    type: [BookingTableSchema],
-    required: true
-  },
-  fee: {
-    type: Number,
-    default: 0
-  },
-  notes: {
-    type: String,
-    default: ''
-  },
-  email: {
-    type: String,
-    default: ''
-  }
+    status: {
+        type: String,
+        enum: ['Available', 'Reserved', 'Dine-In', 'Unavailable'],
+        default: 'Available'
+    },
 }, { 
-  timestamps: true 
+    timestamps: true,
 });
 
-const Booking = mongoose.model('Booking', bookingSchema);
+export default mongoose.model('TableBooking', TableBookingSchema,'TableBooking');
 
-export default Booking;

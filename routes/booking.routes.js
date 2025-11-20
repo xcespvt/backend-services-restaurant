@@ -1,17 +1,11 @@
 "use strict";
 
-import express from "express";
 import bookingController from "../controllers/booking.controller.js";
 
-const router = express.Router();
+async function bookingRoutes(fastify) {
+  // Branch routes
+  fastify.get("/:restaurantId", bookingController.getAllBookings);
+fastify.post("/:restaurantId/tables/series", bookingController.addTableSeries);
+}
 
-// Get all bookings for a branch
-router.get("/:branchId", bookingController.getAllBookings);
-
-// Add a new booking
-router.post("/:branchId", bookingController.addBooking);
-
-// Update booking status
-router.patch("/:branchId/:bookingId/status", bookingController.updateBookingStatus);
-
-export default router;
+export default bookingRoutes;
