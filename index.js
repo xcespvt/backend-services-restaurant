@@ -4,6 +4,10 @@ import fastifyMultipart from "@fastify/multipart";
 import helmet from "@fastify/helmet";
 import cors from "@fastify/cors";
 import compression from "compression";
+import fastifyCookie from "@fastify/cookie";
+
+
+
 
 // 🧠 Import DB functions
 import { connectDB, testConnection } from "./config/db.js";
@@ -33,6 +37,10 @@ app.register(cors, {
   credentials: true,
 });
 app.register(compression());
+// 🍪 Cookie plugin
+app.register(fastifyCookie, {// for signed cookies (optional)
+  hook: "onRequest",
+});
 
 // Allow multipart form-data
 app.register(fastifyMultipart);
@@ -58,7 +66,7 @@ app.get("/", async (request, reply) => {
 });
 
 // 🩺 Health check
-app.get("/health", async (req,  reply) => {
+app.get("/health", async (request,  reply) => {
   return {
     status: "ok",
     message: "Server is running",

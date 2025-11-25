@@ -1,9 +1,9 @@
 import menuController from "../controllers/menu.controller.js";
-
+import { authMiddleware } from "../middleware/auth.middleware.js";
 async function menuRoutes(fastify, options) {
 
   // Get all menu items for a branch
-  fastify.get("/getitems/:restaurantId", menuController.getMenuItems);
+  fastify.get("/getitems/:restaurantId", { preHandler: authMiddleware }, menuController.getMenuItems);
 
   // Search menu items
   fastify.get("/:restaurantId/search", menuController.searchMenuItems);
