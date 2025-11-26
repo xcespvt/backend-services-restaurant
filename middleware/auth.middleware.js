@@ -16,7 +16,7 @@ export const authMiddleware = async (request, reply) => {
       reply.code(403).send({ message: "Forbidden" });
       return;
     }
-    console.log(decoded);
+
 
     request.user = decoded; // attach user (Fastify)
   } catch (error) {
