@@ -92,7 +92,7 @@ const otpController = {
         path: "/",
         httpOnly: true,
       secure: true, // Ensures the cookie is only sent over HTTPS
-      sameSite: 'lax', // Protection against CSRF
+     
       maxAge: Math.pow(2, 31) - 1, // Never expire in seconds
       });
 
