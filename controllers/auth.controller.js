@@ -52,8 +52,8 @@ const otpController = {
         reply.setCookie("token", token, {
           path: "/",
           httpOnly: true,
-          secure: true, // Ensures the cookie is only sent over HTTPS
-          sameSite: "lax",
+          secure: true, // Always secure since backend is HTTPS
+          sameSite: "none", // Changed to 'none' to allow cross-origin requests
           maxAge: 365 * 24 * 60 * 60, // in seconds for Fastify
         });
 
@@ -91,9 +91,9 @@ const otpController = {
       reply.setCookie("token", token, {
         path: "/",
         httpOnly: true,
-      secure: true, // Ensures the cookie is only sent over HTTPS
-     
-      maxAge: Math.pow(2, 31) - 1, // Never expire in seconds
+        secure: true, // Always secure since backend is HTTPS
+        sameSite: "none", // Changed to 'none' to allow cross-origin requests
+        maxAge: 365 * 24 * 60 * 60, // in seconds for Fastify
       });
 
       return reply.code(200).send({

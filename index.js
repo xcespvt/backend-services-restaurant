@@ -35,6 +35,7 @@ app.register(cors, {
   origin: ["http://localhost:3000", "https://n-i-g-x-gu-uc-3qj-restaurant.vercel.app","https://excel-buf-nov-national.trycloudflare.com"], // Allow requests from all origins
   methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
   credentials: true,
+  exposedHeaders: ["set-cookie"], // Expose set-cookie header
 });
 app.register(compression());
 // 🍪 Cookie plugin
