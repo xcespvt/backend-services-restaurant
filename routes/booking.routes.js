@@ -1,11 +1,11 @@
 "use strict";
 
 import bookingController from "../controllers/booking.controller.js";
-
+import { authMiddleware } from "../middleware/auth.js";
 async function bookingRoutes(fastify) {
   // Branch routes
-  fastify.get("/:restaurantId", bookingController.getAllBookings);
-fastify.post("/:restaurantId/tables/series", bookingController.addTableSeries);
+  fastify.get("/:restaurantId", { preHandler: authMiddleware }, bookingController.getAllBookings);
+  fastify.post("/:restaurantId/tables/series", { preHandler: authMiddleware }, bookingController.addTableSeries);
 }
 
 export default bookingRoutes;

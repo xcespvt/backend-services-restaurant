@@ -6,7 +6,7 @@ import feedbackController from "../controllers/feedback.controller.js";
 const router = express.Router();
 
 // Get all feedback for a branch
-router.get("/:branchId", feedbackController.getAllFeedback);
+router.get("/:branchId", { preHandler: authMiddleware }, feedbackController.getAllFeedback);
 
 // Get feedback details
 router.get("/:branchId/:feedbackId", feedbackController.getFeedbackDetails);
