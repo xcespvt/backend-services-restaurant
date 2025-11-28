@@ -28,8 +28,8 @@ async function menuRoutes(fastify, options) {
   
   // Image upload route with multer middleware
   fastify.post("/upload-image", {
-
-  },{ preHandler: authMiddleware }, menuController.uploadImageToCloudflare);
+    preHandler: authMiddleware
+  }, menuController.uploadImageToCloudflare);
 }
 
 export default menuRoutes;

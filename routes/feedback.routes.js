@@ -2,11 +2,12 @@
 
 import express from "express";
 import feedbackController from "../controllers/feedback.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 // Get all feedback for a branch
-router.get("/:branchId", { preHandler: authMiddleware }, feedbackController.getAllFeedback);
+router.get("/:branchId", feedbackController.getAllFeedback);
 
 // Get feedback details
 router.get("/:branchId/:feedbackId", feedbackController.getFeedbackDetails);
