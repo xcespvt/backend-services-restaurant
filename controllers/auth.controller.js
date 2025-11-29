@@ -108,7 +108,35 @@ const otpController = {
         error: error.message,
       });
     }
-  }
+  },
+
+  verifyToken: async (request, reply) => {
+    try {
+       const token = request.cookies?.token;
+
+      if (!token) {
+        return reply.code(401).send({
+          success: false,
+          message: "Token is missing",
+        });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return reply.code(200).send({
+        success: true,
+        message: "Token is valid",
+        decoded,
+      });
+    } catch (error) {
+      
+      return reply.code(401).send({
+        success: false,
+        message: "Invalid token",
+      });
+    }
+  },
+
+
 
 };
 
