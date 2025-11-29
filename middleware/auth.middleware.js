@@ -20,6 +20,6 @@ export const authMiddleware = async (request, reply) => {
 
     request.user = decoded; // attach user (Fastify)
   } catch (error) {
-    reply.code(401).send({ message: "Unauthorized: Invalid token" });
+    reply.code(401).send({ success: 0, message: "Not Authorized : Invalid token" });
   }
 };
