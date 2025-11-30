@@ -32,10 +32,13 @@ const port = process.env.PORT || 3000;
 
 app.register(helmet);
 app.register(cors, {
-  origin: "*", // Allow requests from all origins
-  methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-  credentials: true,
-  exposedHeaders: ["set-cookie"], // Expose set-cookie header
+  origin: ["http://localhost:3000", "https://n-i-g-x-gu-uc-3qj-restaurant.vercel.app", 
+    'http:// localhost',           // Android Capacitor
+    'capacitor://localhost',      // iOS Capacitor
+    'http://localhost:3000'], // Allow requests from all origins
+    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+    credentials: true,
+    exposedHeaders: ["set-cookie"], // Expose set-cookie header
 });
 app.register(compression());
 // 🍪 Cookie plugin
@@ -67,7 +70,7 @@ app.get("/", async (request, reply) => {
 });
 
 // 🩺 Health check
-app.get("/health", async (request,  reply) => {
+app.get("/health", async (request, reply) => {
   return {
     status: "ok",
     message: "Server is running",
