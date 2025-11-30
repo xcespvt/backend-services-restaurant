@@ -32,8 +32,8 @@ const port = process.env.PORT || 3000;
 
 app.register(helmet);
 app.register(cors, {
-  origin: ["http://localhost:3000", "https://n-i-g-x-gu-uc-3qj-restaurant.vercel.app", 
-    'http:// localhost',           // Android Capacitor
+  origin: ["https://n-i-g-x-gu-uc-3qj-restaurant.vercel.app", 
+    'http://localhost',           // Android Capacitor
     'capacitor://localhost',      // iOS Capacitor
     'http://localhost:3000'], // Allow requests from all origins
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
