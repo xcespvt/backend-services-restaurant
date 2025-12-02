@@ -136,6 +136,30 @@ const otpController = {
     }
   },
 
+  logout: async (request, reply) => {
+    try {
+      // Clear the token cookie
+      reply.clearCookie("token", {
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
+
+      return reply.code(200).send({
+        success: true,
+        message: "Logged out successfully",
+      });
+    } catch (error) {
+      console.error("Error logging out:", error.message);
+      return reply.code(500).send({
+        success: false,
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  },
+
 
 
 };
