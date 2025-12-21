@@ -49,7 +49,7 @@ export function sendOtpEmail(to, otp) {
             <div class="otp-box">${otp}</div>
           </div>
           <p style="font-size:0.9rem; color:#555;">This OTP is valid for 10 minutes. Do not share it.</p>
-          <p style="font-size:0.8rem; color:hsl(142,66%,40%);">© 2025 Crevings Inc. All Rights Reserved.</p>
+          <p style="font-size:0.8rem; color:hsl(142,66%,40%);">© 2025 Crevings Markeplace Private Limited. All Rights Reserved.</p>
         </center>
       </body>
       </html>

@@ -4,7 +4,8 @@ import mainBranchService from "../services/mainBranchService.js";
 const mainBranchController = {
   getMainBranches: async (request, reply) => {
     try {
-      const data = await mainBranchService.getData({});
+      const filter = { "contact.email": request.user.email };
+      const data = await mainBranchService.getData(filter);
       return reply.code(200).send({
         success: true,
         message: "Main Branches retrieved successfully",
