@@ -1,9 +1,11 @@
 "use strict";
 
 import Otp from "../models/otpModel.js";
+import mainBranchModel from "../models/mainBranch.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { sendOtpEmail } from "../services/emailService.js";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -14,6 +16,14 @@ const otpController = {
       const { email } = request.body;
       if (!email)
         return reply.code(400).send({ success: false, message: "Email is required" });
+
+      const mainBranch = await mainBranchModel.findOne({ "contact.email": email });
+      if (!mainBranch) {
+        return reply.code(400).send({
+          success: false,
+          message: "Email is not registered",
+        });
+      }
 
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -38,6 +48,43 @@ const otpController = {
   verifyOtp: async (request, reply) => {
     try {
       const { email, otp, password } = request.body;
+      
+      if (password) {
+        const user = await mainBranchModel.findOne({ "contact.email": email });
+        if (!user) {
+          return reply.code(400).send({
+            success: false,
+            message: "Invalid email or password",
+          });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          return reply.code(400).send({
+            success: false,
+            message: "Invalid email or password",
+          });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+          expiresIn: "365d",
+        });
+
+        // Set JWT as HTTP-only cookie
+        reply.setCookie("token", token, {
+          path: "/",
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 365 * 24 * 60 * 60,
+        });
+
+        return reply.code(200).send({
+          success: true,
+          message: "Logged in successfully",
+        });
+      }
 
       if (
         (email === "amanatprakash@gmail.com" && otp === "335782") ||
@@ -159,9 +206,6 @@ const otpController = {
       });
     }
   },
-
-
-
 };
 
 export default otpController;

@@ -41,6 +41,11 @@ const mainBranchSchema = new Schema({
     },
     website: String
   },
+  password : {
+    type: String,
+    required: true,
+    trim: true
+  },
   operatingHours: {
     monday: { open: String, close: String },
     tuesday: { open: String, close: String },

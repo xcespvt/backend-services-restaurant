@@ -47,7 +47,7 @@ app.register(cors, {
   credentials: true,
   exposedHeaders: ["set-cookie"],
 });
-// app.register(cors, {
+
 //   origin: ["https://n-i-g-x-gu-uc-3qj-restaurant.vercel.app", 
 //     'http://localhost',           // Android Capacitor
 //     'capacitor://localhost',      // iOS Capacitor
