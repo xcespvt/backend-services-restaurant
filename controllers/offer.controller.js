@@ -1,7 +1,7 @@
 "use strict";
 import OfferService from "../services/offerService.js";
 
-import { v4 as uuidv4 } from "uuid";
+import { v7 as uuidv7 } from "uuid";
 // Rest of your controller code...
 
 const offerController = {
@@ -143,7 +143,7 @@ const offerController = {
             const newOffer = await OfferService.addData({
                 restaurantId,
                 couponCode,
-                offerId: uuidv4(),
+                offerId: uuidv7(),
                 offerTitle,
                 description,
                 offerType,
@@ -172,131 +172,7 @@ const offerController = {
         }
     },
 
-    // updateOffers: async (request, reply) => {
-    //     try {
-    //         const { restaurantId, offerId } = request.params;
-    //         const itemData = request.body;
-    //         delete itemData.restaurantId;
-    //         // Basic validations
-    //         if (!restaurantId || !offerId) {
-    //             return reply.code(400).send({
-    //                 success: false,
-    //                 message: "Restaurant ID and Offer ID are required",
-    //             });
-    //         }
-
-    //         // Fetch existing offer (optional if needed for merge)
-    //         const existingOffer = await OfferService.getData({ restaurantId, offerId });
-    //         if (!existingOffer) {
-    //             return reply.code(404).send({
-    //                 success: false,
-    //                 message: "Offer not found",
-    //             });
-    //         }
-
-    //         const {
-    //             offerType = existingOffer.offerType,
-    //             discountPercentage,
-    //             discountAmount,
-    //             freeItem,
-    //             bogoItems,
-    //             happyHourTiming,
-    //             validUntil,
-    //         } = itemData;
-
-
-    //         if (offerType === "Percentage Discount") {
-    //             if (discountPercentage === undefined || discountPercentage === null) {
-    //                 return reply.code(400).send({
-    //                     success: false,
-    //                     message: "Discount percentage is required for Percentage Discount offers",
-    //                 });
-    //             }
-    //             if (discountPercentage <= 0 || discountPercentage > 100) {
-    //                 return reply.code(400).send({
-    //                     success: false,
-    //                     message: "Discount percentage must be between 1 and 100",
-    //                 });
-    //             }
-    //         }
-
-    //         if (offerType === "Flat Discount") {
-    //             if (discountAmount === undefined || discountAmount === null) {
-    //                 return reply.code(400).send({
-    //                     success: false,
-    //                     message: "Discount amount is required for Flat Discount offers",
-    //                 });
-    //             }
-    //             if (discountAmount <= 0) {
-    //                 return reply.code(400).send({
-    //                     success: false,
-    //                     message: "Discount amount must be greater than 0",
-    //                 });
-    //             }
-    //         }
-
-    //         if (offerType === "Free Item" && !freeItem) {
-    //             return reply.code(400).send({
-    //                 success: false,
-    //                 message: "Free item must be provided for Free Item offers",
-    //             });
-    //         }
-
-    //         if (offerType === "Buy-One-Get-One (BOGO)" && !bogoItems) {
-    //             return reply.code(400).send({
-    //                 success: false,
-    //                 message: "BOGO items must be provided for Buy-One-Get-One offers",
-    //             });
-    //         }
-
-    //         if (offerType === "Happy Hour") {
-    //             if (
-    //                 !happyHourTiming ||
-    //                 !happyHourTiming.startTime ||
-    //                 !happyHourTiming.endTime
-    //             ) {
-    //                 return reply.code(400).send({
-    //                     success: false,
-    //                     message: "Happy Hour start and end times are required",
-    //                 });
-    //             }
-    //         }
-
-    //         // Validate validUntil if present
-    //         if (validUntil && isNaN(new Date(validUntil))) {
-    //             return reply.code(400).send({
-    //                 success: false,
-    //                 message: "Invalid validUntil date format",
-    //             });
-    //         }
-
-    //         // Prepare update payload
-    //         const updatedOfferData = {
-    //             ...itemData,
-    //             validUntil: validUntil ? new Date(validUntil) : existingOffer.validUntil,
-    //         };
-
-    //         // Update the offer
-    //         const updatedOffer = await OfferService.updateData(
-    //             { restaurantId, offerId },
-    //             { $set: updatedOfferData, new: true, overwrite: true }
-    //         );
-
-    //         return reply.code(200).send({
-    //             success: true,
-    //             message: "Offer updated successfully",
-    //             data: updatedOffer,
-    //         });
-    //     } catch (error) {
-    //         console.error("Error updating offer:", error.message);
-
-    //         return reply.code(500).send({
-    //             success: false,
-    //             message: "Error updating offer",
-    //             error: error.message,
-    //         });
-    //     }
-    // },
+ 
 updateOffers: async (request, reply) => {
   try {
     const { restaurantId, offerId } = request.params;

@@ -1,7 +1,7 @@
 'use strict';
 
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 const Schema = mongoose.Schema;
 
@@ -50,9 +50,9 @@ const CostSplitSchema = new Schema({
 }, { _id: false });
 
 const refundSchema = new Schema({
-  refundId: { 
+  refundId: {
     type: String,
-    default: () => uuidv4(),
+    default: () => uuidv7(),
     unique: true,
     index: true
   },
@@ -126,8 +126,8 @@ const refundSchema = new Schema({
   processedAt: {
     type: Date
   }
-}, { 
-  timestamps: true 
+}, {
+  timestamps: true
 });
 
 const Refund = mongoose.model('Refund', refundSchema);

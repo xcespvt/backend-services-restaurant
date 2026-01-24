@@ -1,14 +1,14 @@
 'use strict';
 
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 const Schema = mongoose.Schema;
 
 const categorySchema = new Schema({
   categoryId: { 
     type: String,
-    default: () => uuidv4(),
+    default: () => uuidv7(),
     unique: true,
     index: true
   },

@@ -1,14 +1,14 @@
 'use strict';
 
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  userId: { 
+  userId: {
     type: String,
-    default: () => uuidv4(),
+    default: () => uuidv7(),
     unique: true,
     index: true
   },
@@ -49,8 +49,8 @@ const userSchema = new Schema({
     type: Boolean,
     default: true
   }
-}, { 
-  timestamps: true 
+}, {
+  timestamps: true
 });
 
 const User = mongoose.model('User', userSchema);

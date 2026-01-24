@@ -1,6 +1,6 @@
 "use strict";
 import MenuService from "../services/menuServices.js";
-import { v4 as uuidv4 } from "uuid";
+import { v7 as uuidv7 } from "uuid";
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import fs from 'fs';
@@ -239,7 +239,7 @@ const menuController = {
      
       let data = await MenuService.addData({
         restaurantId,
-        itemId: uuidv4(),
+        itemId: uuidv7(),
         name,
         description,
         type,

@@ -1,14 +1,14 @@
 'use strict';
 
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 const Schema = mongoose.Schema;
 
 const tableSchema = new Schema({
-  tableId: { 
+  tableId: {
     type: String,
-    default: () => uuidv4(),
+    default: () => uuidv7(),
     unique: true,
     index: true
   },
@@ -44,8 +44,8 @@ const tableSchema = new Schema({
     type: Boolean,
     default: true
   }
-}, { 
-  timestamps: true 
+}, {
+  timestamps: true
 });
 
 const Table = mongoose.model('Table', tableSchema);

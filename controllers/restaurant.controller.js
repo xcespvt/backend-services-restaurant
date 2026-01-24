@@ -1,7 +1,7 @@
 // import MENU_ITEM_SERVICE from "../services/menuItemServices.js";
 // import MENU_PRICING_SERVICE from "../services/menuPricingServices.js";
 
-import { v4 as uuidv4 } from "uuid";
+import { v7 as uuidv7 } from "uuid";
 import RESTAURANT_SERVICE from "../services/restaurantServices.js";
 import MENU_SERVICE from "../services/menuServices.js";
 
@@ -25,7 +25,7 @@ const restaurantController = {
             } = req.body;
 
             let data = await RESTAURANT_SERVICE.addData({
-                restaurantId: uuidv4(),
+                restaurantId: uuidv7(),
                 name,
                 address,
                 phone,
@@ -52,14 +52,14 @@ const restaurantController = {
             });
         }
     },
-    
+
     addMenuItem: async (req, res) => {
         try {
             const { restaurantId, name, description, type, available, category, images, pricing_unit, pricing_options } = req.body;
 
             let data = await MENU_SERVICE.addData({
                 restaurantId,
-                itemId: uuidv4(),   
+                itemId: uuidv7(),
                 name,
                 description,
                 type,

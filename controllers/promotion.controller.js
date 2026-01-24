@@ -1,7 +1,7 @@
 "use strict";
 import PromotionService from "../services/promotionService.js";
 
-import { v4 as uuidv4 } from "uuid";
+import { v7 as uuidv7 } from "uuid";
 
 
 const promotionController = {
@@ -162,7 +162,7 @@ const promotionController = {
       // ====== CREATE PROMOTION DOCUMENT ======
       const newPromotion = await PromotionService.addData({
         restaurantId,
-        promotionId: uuidv4(),
+        promotionId: uuidv7(),
         campaignTitle,
         shortDescription,
         couponCode,

@@ -2,7 +2,7 @@
 
 
 import bookingService from "../services/bookingService.js";
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 const bookingController = {
   getAllBookings: async (request, reply) => {
@@ -110,7 +110,7 @@ const bookingController = {
 
   //       tablesData.push({
   //         restaurantId,
-  //         tableId : uuidv4(),
+  //         tableId : uuidv7(),
   //         name: name, // Using tableId as name by default
   //         capacity: parseInt(capacity, 10),
   //         type,
@@ -147,7 +147,7 @@ const bookingController = {
   //   }
   // }
 
-addTableSeries: async (request, reply) => {
+  addTableSeries: async (request, reply) => {
     try {
       const { restaurantId } = request.params;
       const { prefix, startNumber, endNumber, capacity, type } = request.body;
@@ -218,7 +218,7 @@ addTableSeries: async (request, reply) => {
       // ================================
       const bulkDocs = names.map(name => ({
         restaurantId,
-        tableId: uuidv4(),
+        tableId: uuidv7(),
         name,
         capacity: Number(capacity),
         type,

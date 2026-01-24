@@ -1,7 +1,7 @@
 'use strict';
 
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 const Schema = mongoose.Schema;
 
@@ -73,9 +73,9 @@ const NotificationSettingsSchema = new Schema({
 }, { _id: false });
 
 const settingSchema = new Schema({
-  settingId: { 
+  settingId: {
     type: String,
-    default: () => uuidv4(),
+    default: () => uuidv7(),
     unique: true,
     index: true
   },
@@ -109,8 +109,8 @@ const settingSchema = new Schema({
     type: Boolean,
     default: false
   }
-}, { 
-  timestamps: true 
+}, {
+  timestamps: true
 });
 
 const Setting = mongoose.model('Setting', settingSchema);

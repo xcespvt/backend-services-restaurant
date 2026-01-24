@@ -1,14 +1,14 @@
 'use strict';
 
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 const Schema = mongoose.Schema;
 
 const mainBranchSchema = new Schema({
   branchId: {
     type: String,
-    default: () => uuidv4(),
+    default: () => uuidv7(),
     unique: true,
     index: true
   },
@@ -41,7 +41,7 @@ const mainBranchSchema = new Schema({
     },
     website: String
   },
-  password : {
+  password: {
     type: String,
     required: true,
     trim: true
@@ -71,4 +71,4 @@ const mainBranchSchema = new Schema({
   timestamps: true // This will automatically handle createdAt and updatedAt
 });
 
-export default mongoose.model('mainBranch', mainBranchSchema,'mainBranch');
+export default mongoose.model('mainBranch', mainBranchSchema, 'mainBranch');
