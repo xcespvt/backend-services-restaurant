@@ -13,7 +13,7 @@ import fastifyCookie from "@fastify/cookie";
 import { connectDB, testConnection } from "./config/db.js";
 
 // 📁 Route plugins (make sure each route file exports an async function)
-import restaurantRoutes from "./routes/restaurant.routes.js";
+// import restaurantRoutes from "./routes/restaurant.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import branchRoutes from "./routes/branch.routes.js";
 import menuRoutes from "./routes/menu.routes.js";
@@ -33,17 +33,17 @@ const port = process.env.PORT || 3000;
 app.register(helmet);
 app.register(cors, {
   origin: [
-    "https://n-i-g-x-gu-uc-3qj-restaurant.vercel.app", 
-    
+    "https://n-i-g-x-gu-uc-3qj-restaurant.vercel.app",
+
     // 👇 ADD THIS EXACT LINE (Note the 's')
-    "https://localhost", 
-    
+    "https://localhost",
+
     // Keep these for compatibility/testing
     "http://localhost",
     "capacitor://localhost",
     "http://localhost:3000"
   ],
-  methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+  methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
   credentials: true,
   exposedHeaders: ["set-cookie"],
 });
@@ -65,7 +65,7 @@ app.register(fastifyCookie, {// for signed cookies (optional)
 // Allow multipart form-data
 app.register(fastifyMultipart);
 // 📦 Register route modules with prefixes
-app.register(restaurantRoutes, { prefix: "/restaurant" });
+// app.register(restaurantRoutes, { prefix: "/restaurant" });
 app.register(authRoutes, { prefix: "/api/auth" });
 app.register(branchRoutes, { prefix: "/api/branches" });
 app.register(menuRoutes, { prefix: "/api/menu" });

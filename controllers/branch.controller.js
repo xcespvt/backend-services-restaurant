@@ -3,7 +3,7 @@
 import branchService from "../services/branchService.js";
 
 const branchController = {
-  getAllBranches: async (req, res) => {
+  getAllBranches: async (request, reply) => {
     try {
       const { userId } = req.query;
       
@@ -32,7 +32,7 @@ const branchController = {
     }
   },
   
-  addBranch: async (req, res) => {
+  addBranch: async (request, reply) => {
     try {
       const { userId } = req.query;
       const branchData = req.body;
@@ -70,7 +70,7 @@ const branchController = {
     }
   },
   
-  updateBranch: async (req, res) => {
+  updateBranch: async (request, reply) => {
     try {
       const { branchId } = req.params;
       const branchData = req.body;
@@ -107,7 +107,7 @@ const branchController = {
     }
   },
   
-  deleteBranch: async (req, res) => {
+  deleteBranch: async (request, reply) => {
     try {
       const { branchId } = req.params;
       
@@ -137,42 +137,6 @@ const branchController = {
       return res.status(500).json({
         success: false,
         message: "Error deleting branch",
-        error: error.message
-      });
-    }
-  },
-  
-  toggleBranchOnlineStatus: async (req, res) => {
-    try {
-      const { branchId } = req.params;
-      
-      if (!branchId) {
-        return res.status(400).json({
-          success: false,
-          message: "Branch ID is required"
-        });
-      }
-      
-      const result = await branchService.toggleBranchOnlineStatus(branchId);
-      
-      return res.status(200).json({
-        success: true,
-        message: `Branch is now ${result.isOnline ? 'online' : 'offline'}`,
-        data: result
-      });
-    } catch (error) {
-      console.error(error.message);
-      
-      if (error.message === "Branch not found") {
-        return res.status(404).json({
-          success: false,
-          message: "Branch not found"
-        });
-      }
-      
-      return res.status(500).json({
-        success: false,
-        message: "Error toggling branch online status",
         error: error.message
       });
     }

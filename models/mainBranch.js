@@ -46,6 +46,14 @@ const mainBranchSchema = new Schema({
     required: true,
     trim: true
   },
+  isOnline: {
+    type: Boolean,
+    default: true
+  },
+  isRushHour: {
+    type: Boolean,
+    default: false
+  },
   operatingHours: {
     monday: { open: String, close: String },
     tuesday: { open: String, close: String },

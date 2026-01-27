@@ -77,7 +77,7 @@ const services = {
             let dataObj = new DATA_MODEL(data);
 
             let newDoc = await dataObj.save();
-  
+
             return newDoc;
 
         } catch (e) {
@@ -87,6 +87,7 @@ const services = {
 
         return newDoc;
     },
+
     getCountDocument: async (filter) => {
 
         let count = 0;
@@ -102,6 +103,62 @@ const services = {
 
         return count;
     },
+
+    toggleBranchOnlineStatus: async (branchId, email) => {
+        try {
+            // Find the branch first
+            const branch = await DATA_MODEL.findOne({
+                branchId,
+                "contact.email": email
+            });
+
+            if (!branch) {
+                throw new Error("Branch not found");
+            }
+
+            // Toggle the status
+            branch.isOnline = !branch.isOnline;
+            const updatedBranch = await branch.save();
+
+            return {
+                id: updatedBranch.branchId,
+                isOnline: updatedBranch.isOnline,
+                name: updatedBranch.name
+            };
+
+        } catch (error) {
+            console.error("Error in toggleBranchOnlineStatus:", error.message);
+            throw error;
+        }
+    },
+
+    toggleBranchRushHourStatus: async (branchId, email) => {
+        try {
+            // Find the branch first
+            const branch = await DATA_MODEL.findOne({
+                branchId,
+                "contact.email": email
+            });
+
+            if (!branch) {
+                throw new Error("Branch not found");
+            }
+
+            // Toggle the status
+            branch.isRushHour = !branch.isRushHour;
+            const updatedBranch = await branch.save();
+
+            return {
+                id: updatedBranch.branchId,
+                isRushHour: updatedBranch.isRushHour,
+                name: updatedBranch.name
+            };
+
+        } catch (error) {
+            console.error("Error in toggleBranchRushHourStatus:", error.message);
+            throw error;
+        }
+    }
 
 };
 

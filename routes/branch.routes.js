@@ -10,10 +10,13 @@ async function branchRoutes(fastify) {
   fastify.post("/", branchController.addBranch);
   fastify.put("/:branchId", branchController.updateBranch);
   fastify.delete("/:branchId", branchController.deleteBranch);
-  fastify.patch("/:branchId/toggle-online", branchController.toggleBranchOnlineStatus);
+  
 
   // Main branch routes
   fastify.get("/mainbranch",{preHandler: authMiddleware}, mainBranchController.getMainBranches);
-}
+  fastify.patch("/:branchId/toggle-online", {preHandler: authMiddleware}, mainBranchController.toggleBranchOnlineStatus);
+  fastify.patch("/:branchId/rush-hour", {preHandler: authMiddleware}, mainBranchController.toggleBranchRushHourStatus);
+
+} 
 
 export default branchRoutes;
