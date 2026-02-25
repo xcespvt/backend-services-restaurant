@@ -8,7 +8,6 @@ const bookingController = {
   getAllBookings: async (request, reply) => {
     try {
       const { restaurantId } = request.params;
-      console.log(restaurantId);
 
       if (!restaurantId) {
         return reply.code(400).send({

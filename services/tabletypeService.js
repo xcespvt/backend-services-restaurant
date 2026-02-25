@@ -1,6 +1,6 @@
 "use strict";
 
-import DATA_MODEL from "../models/bookingModel.js";
+import DATA_MODEL from "../models/tableTypeModel.js";
 
 
 const services = {
@@ -83,7 +83,6 @@ const services = {
             throw e;
         }
     },
-
     getCountDocument: async (filter) => {
 
         let count = 0;
@@ -99,6 +98,18 @@ const services = {
 
         return count;
     },
+
+    deleteData: async (filter) => {
+        let result = null;
+
+        try {
+            result = await DATA_MODEL.findOneAndDelete(filter);
+        } catch (e) {
+            console.error(e.message);
+        }
+
+        return result;
+    }
 
 };
 

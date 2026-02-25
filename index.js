@@ -81,7 +81,7 @@ app.register(promotionRoutes, { prefix: "/api/promotions" });
 
 app.get("/", async (request, reply) => {
   return {
-    message: "Welcome to XCES Restaurant Management System API",
+    message: "Welcome to Crevings Restaurant Management System API",
   };
 });
 
