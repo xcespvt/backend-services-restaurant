@@ -1,7 +1,7 @@
 "use strict";
 
 import Order from "../models/orderModel.js";
-import Branch from "../models/branchModel.js";
+
 
 const orderService = {
   getAllOrders: async (branchId, status, type, date) => {

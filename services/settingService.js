@@ -1,7 +1,7 @@
 "use strict";
 
 import Setting from "../models/settingModel.js";
-import Branch from "../models/branchModel.js";
+
 
 const settingService = {
   getSettings: async (branchId) => {

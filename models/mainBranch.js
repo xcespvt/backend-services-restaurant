@@ -63,6 +63,56 @@ const mainBranchSchema = new Schema({
     saturday: { open: String, close: String },
     sunday: { open: String, close: String }
   },
+  profile: {
+    restaurantInfo: {
+      name: String,
+      address: String,
+      city: String,
+      pincode: String,
+      phone: String,
+      email: String,
+      ownershipType: String,
+      type: { type: String }, // Mongoose interprets `type: String` as the type of an object. Changing to `{ type: String }`
+      fssai: String,
+      gst: String,
+      registrationType: String,
+      legalName: String,
+      cin: String,
+      cuisines: String
+    },
+    ownerInfo: {
+      name: String,
+      email: String,
+      phone: String,
+      whatsapp: String
+    },
+    operatingHours: [{
+      day: String,
+      opening: String,
+      closing: String,
+      open: Boolean
+    }],
+    documents: [{
+      name: String,
+      status: String,
+      details: String,
+      lastUpdated: String,
+      fileUrl: String
+    }],
+    bankAccount: {
+      accountHolder: String,
+      accountNumber: String,
+      ifsc: String,
+      bankName: String
+    },
+    facilities: [{ type: String }],
+    services: {
+      delivery: { type: Boolean, default: false },
+      takeaway: { type: Boolean, default: false },
+      dineIn: { type: Boolean, default: false },
+      booking: { type: Boolean, default: false }
+    }
+  },
   isActive: {
     type: Boolean,
     default: true
