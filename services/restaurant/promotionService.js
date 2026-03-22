@@ -1,6 +1,6 @@
 "use strict";
 
-import DATA_MODEL from "../models/promotionModel.js";
+import DATA_MODEL from "../../models/restaurant/promotionModel.js";
 
 const services = {
   getData: async function (filter, select, sort = {}, skip = {}, limit = {}) {

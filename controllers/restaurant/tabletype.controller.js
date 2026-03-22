@@ -1,6 +1,6 @@
 "use strict";
 
-import tableTypeService from "../services/tabletypeService.js";
+import tableTypeService from "../../services/tabletypeService.js";
 import { v7 as uuidv7 } from 'uuid';
 
 const tableTypeController = {

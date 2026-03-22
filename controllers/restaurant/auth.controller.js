@@ -1,10 +1,10 @@
 "use strict";
 
-import Otp from "../models/otpModel.js";
-import mainBranchModel from "../models/mainBranch.js";
+import Otp from "../../models/restaurant/otpModel.js";
+import mainBranchModel from "../../models/restaurant/mainBranch.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { sendOtpEmail } from "../services/emailService.js";
+import { sendOtpEmail } from "../../services/restaurant/emailService.js";
 import bcrypt from "bcrypt";
 
 dotenv.config();
@@ -48,7 +48,7 @@ const otpController = {
   verifyOtp: async (request, reply) => {
     try {
       const { email, otp, password } = request.body;
-      
+
       if (password) {
         const user = await mainBranchModel.findOne({ "contact.email": email });
         if (!user) {
@@ -83,30 +83,6 @@ const otpController = {
         return reply.code(200).send({
           success: true,
           message: "Logged in successfully",
-        });
-      }
-
-      if (
-        (email === "amanatprakash@gmail.com" && otp === "335782") ||
-        (email === "amanatprakash@gmail.com" && password === "demo_test_62618")
-      ) {
-        // Generate JWT token
-        const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-          expiresIn: "365d",
-        });
-
-        // 🍪 Set JWT as HTTP-only cookie
-        reply.setCookie("token", token, {
-          path: "/",
-          httpOnly: true,
-          secure: true, // Always secure since backend is HTTPS
-          sameSite: "none", // Changed to 'none' to allow cross-origin requests
-          maxAge: 365 * 24 * 60 * 60, // in seconds for Fastify
-        });
-
-        return reply.code(200).send({
-          success: true,
-          message: "OTP verified successfully",
         });
       }
 
@@ -159,7 +135,7 @@ const otpController = {
 
   verifyToken: async (request, reply) => {
     try {
-       const token = request.cookies?.token;
+      const token = request.cookies?.token;
 
       if (!token) {
         return reply.code(401).send({
@@ -175,7 +151,7 @@ const otpController = {
         decoded,
       });
     } catch (error) {
-      
+
       return reply.code(401).send({
         success: false,
         message: "Invalid token",

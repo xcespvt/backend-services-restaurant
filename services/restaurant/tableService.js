@@ -1,6 +1,6 @@
 "use strict";
 
-import Table from "../models/tableModel.js";
+import Table from "../../models/restaurant/tableModel.js";
 
 const tableService = {
   getAllTables: async (branchId) => {
@@ -12,7 +12,7 @@ const tableService = {
       throw error;
     }
   },
-  
+
   addTable: async (branchId, tableData) => {
     try {
       const table = new Table({
@@ -20,7 +20,7 @@ const tableService = {
         ...tableData,
         status: 'Available'
       });
-      
+
       const savedTable = await table.save();
       return savedTable;
     } catch (error) {
@@ -28,7 +28,7 @@ const tableService = {
       throw error;
     }
   },
-  
+
   updateTable: async (branchId, tableId, tableData) => {
     try {
       const table = await Table.findOneAndUpdate(
@@ -36,18 +36,18 @@ const tableService = {
         tableData,
         { new: true }
       ).lean();
-      
+
       if (!table) {
         throw new Error("Table not found");
       }
-      
+
       return table;
     } catch (error) {
       console.error(error.message);
       throw error;
     }
   },
-  
+
   deleteTable: async (branchId, tableId) => {
     try {
       // Soft delete by setting isActive to false
@@ -56,36 +56,36 @@ const tableService = {
         { isActive: false },
         { new: true }
       );
-      
+
       if (!table) {
         throw new Error("Table not found");
       }
-      
+
       return true;
     } catch (error) {
       console.error(error.message);
       throw error;
     }
   },
-  
+
   updateTableStatus: async (branchId, tableId, status) => {
     try {
       const validStatuses = ['Available', 'Reserved', 'Occupied', 'Unavailable'];
-      
+
       if (!validStatuses.includes(status)) {
         throw new Error("Invalid table status");
       }
-      
+
       const table = await Table.findOneAndUpdate(
         { tableId, branchId },
         { status },
         { new: true }
       ).lean();
-      
+
       if (!table) {
         throw new Error("Table not found");
       }
-      
+
       return {
         id: table.tableId,
         status: table.status

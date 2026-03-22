@@ -1,6 +1,6 @@
 "use strict";
 
-import DATA_MODEL from "../models/mainBranch.js";
+import DATA_MODEL from "../../models/restaurant/mainBranch.js";
 
 
 const services = {

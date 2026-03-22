@@ -1,6 +1,6 @@
 "use strict";
 
-import DATA_MODEL from "../models/tableTypeModel.js";
+import DATA_MODEL from "../../models/restaurant/tableTypeModel.js";
 
 
 const services = {

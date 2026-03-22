@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import mainBranchModel from "../models/mainBranch.js";
+import mainBranchModel from "../../models/mainBranch.js";
 
 
 export const authMiddleware = async (request, reply) => {

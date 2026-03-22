@@ -1,25 +1,25 @@
 "use strict";
 
-import Order from "../models/orderModel.js";
+import Order from "../../models/restaurant/orderModel.js";
 
 
 const orderService = {
   getAllOrders: async (branchId, status, type, date) => {
     try {
       const filter = { branchId };
-      
+
       if (status) {
         filter.status = status;
       }
-      
+
       if (type) {
         filter.type = type;
       }
-      
+
       if (date) {
         filter.date = date;
       }
-      
+
       const orders = await Order.find(filter).lean();
       return orders;
     } catch (error) {
@@ -27,22 +27,22 @@ const orderService = {
       throw error;
     }
   },
-  
+
   getOrderDetails: async (branchId, orderId) => {
     try {
       const order = await Order.findOne({ orderId, branchId }).lean();
-      
+
       if (!order) {
         throw new Error("Order not found");
       }
-      
+
       return order;
     } catch (error) {
       console.error(error.message);
       throw error;
     }
   },
-  
+
   updateOrderStatus: async (branchId, orderId, status) => {
     try {
       const order = await Order.findOneAndUpdate(
@@ -50,11 +50,11 @@ const orderService = {
         { status },
         { new: true }
       ).lean();
-      
+
       if (!order) {
         throw new Error("Order not found");
       }
-      
+
       return {
         id: order.orderId,
         status: order.status
@@ -64,22 +64,22 @@ const orderService = {
       throw error;
     }
   },
-  
+
   updateOrderPrepTime: async (branchId, orderId, extraMinutes) => {
     try {
       const order = await Order.findOne({ orderId, branchId });
-      
+
       if (!order) {
         throw new Error("Order not found");
       }
-      
+
       // Parse current prep time and add extra minutes
       const currentPrepTime = parseInt(order.prepTime.split(' ')[0]);
       const newPrepTime = currentPrepTime + extraMinutes;
       order.prepTime = `${newPrepTime} mins`;
-      
+
       await order.save();
-      
+
       return {
         id: order.orderId,
         prepTime: order.prepTime
@@ -89,28 +89,28 @@ const orderService = {
       throw error;
     }
   },
-  
+
   acceptNewOrder: async (branchId, orderId, prepTime) => {
     try {
       const order = await Order.findOneAndUpdate(
         { orderId, branchId, status: 'New' },
-        { 
+        {
           status: 'Preparing',
           prepTime
         },
         { new: true }
       ).lean();
-      
+
       if (!order) {
         throw new Error("Order not found or already accepted");
       }
-      
+
       // Increment ordersToday count for the branch
       await Branch.findOneAndUpdate(
         { branchId },
         { $inc: { ordersToday: 1 } }
       );
-      
+
       return {
         id: order.orderId,
         status: order.status,
@@ -121,13 +121,13 @@ const orderService = {
       throw error;
     }
   },
-  
+
   createOfflineOrder: async (branchId, items, customerName, customerPhone, type, paymentMethod) => {
     try {
       // Calculate subtotal and total
       const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const total = subtotal; // In a real implementation, you would add tax, delivery fee, etc.
-      
+
       // Create new order
       const order = new Order({
         branchId,
@@ -151,36 +151,36 @@ const orderService = {
           status: paymentMethod === 'Cash' ? 'Pending' : 'Paid'
         }
       });
-      
+
       const savedOrder = await order.save();
-      
+
       // Increment ordersToday count for the branch
       await Branch.findOneAndUpdate(
         { branchId },
         { $inc: { ordersToday: 1 } }
       );
-      
+
       return savedOrder;
     } catch (error) {
       console.error(error.message);
       throw error;
     }
   },
-  
+
   getOrderHistory: async (branchId, startDate, endDate, type) => {
     try {
       const filter = { branchId };
-      
+
       if (startDate && endDate) {
         filter.date = { $gte: startDate, $lte: endDate };
       }
-      
+
       if (type) {
         filter.type = type;
       }
-      
+
       const orders = await Order.find(filter).lean();
-      
+
       // Return simplified order history
       return orders.map(order => ({
         id: order.orderId,

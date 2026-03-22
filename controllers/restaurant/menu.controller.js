@@ -1,5 +1,5 @@
 "use strict";
-import MenuService from "../services/menuServices.js";
+import MenuService from "../../services/menuServices.js";
 import { v7 as uuidv7 } from "uuid";
 import fetch from 'node-fetch';
 import FormData from 'form-data';
@@ -19,7 +19,7 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Configure multer for file uploads
-const upload = multer({ 
+const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, uploadsDir);
@@ -45,7 +45,7 @@ const upload = multer({
 const menuController = {
   // Handle image upload with multer
   handleImageUpload: upload.single('image'),
-  
+
   // Delete image from Cloudflare
   deleteCloudflareImage: async (request, reply) => {
     try {
@@ -58,12 +58,12 @@ const menuController = {
           message: "Image URL is required"
         });
       }
-      
+
       // Extract image ID from URL
-      
+
       const urlParts = imageUrl.split('/');
       const imageId = urlParts[urlParts.length - 2];
-      
+
       if (!imageId) {
         return reply.code(400).send({
           success: 0,
@@ -71,20 +71,20 @@ const menuController = {
         });
       }
       const cloudflareUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1/${imageId}`;
-      
+
       const response = await fetch(cloudflareUrl, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${apiToken}`
         }
       });
-      
+
       const data = await response.json();
-      
+
       if (!data.success) {
         throw new Error(data.errors?.[0]?.message || 'Failed to delete image from Cloudflare');
       }
-      
+
       return reply.code(200).send({
         success: 1,
         message: "Image deleted successfully"
@@ -100,7 +100,7 @@ const menuController = {
   },
 
   // Upload image directly to Cloudflare
- uploadImageToCloudflare: async (request, reply) => {
+  uploadImageToCloudflare: async (request, reply) => {
     try {
       const parts = request.parts(); // Fastify multipart iterator
       let uploadedFilePath = null;
@@ -182,7 +182,7 @@ const menuController = {
       const limit = Number(request.query.limit); // Default to 10 items per page
       const skip = (page - 1) * limit;
 
-      if(page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !restaurantId || !page || !limit){
+      if (page < 1 || limit < 1 || skip < 0 || page > limit || limit > 10 || !restaurantId || !page || !limit) {
         return reply.code(400).send({
           success: false,
           message: "Invalid request"
@@ -234,9 +234,9 @@ const menuController = {
 
       if (!restaurantId || !name || !type || !category || !pricing_unit || !pricing_options) {
         return reply.code(400).send({ success: false, message: "One or more filed names are not defined" });
-     }
-     // don't include portions in required check
-     
+      }
+      // don't include portions in required check
+
       let data = await MenuService.addData({
         restaurantId,
         itemId: uuidv7(),
@@ -276,70 +276,70 @@ const menuController = {
 
   updateMenuItem: async (request, reply) => {
     try {
- 
+
       const { restaurantId, itemId } = request.params;
-        if (!restaurantId || !itemId) {
-            return reply.code(400).send({
-                success: 0,
-                message: "Invalid request"
-            });
-        }
-
-        // Pull only fields you allow to be updated
-        const {
-            name,
-            description,
-            type,
-            available,
-            category,
-            images,
-            pricing_unit,
-            pricing_options
-        } = request.body;
-
-        // Build update payload only with provided fields (partial update)
-        const update = {};
-        if (restaurantId !== undefined) update.restaurantId = restaurantId;
-        if (itemId !== undefined) update.itemId = itemId;
-        if (name !== undefined) update.name = name;
-        if (description !== undefined) update.description = description;
-        if (type !== undefined) update.type = type;
-        if (available !== undefined) update.available = available;
-        if (category !== undefined) update.category = category;
-        if (images !== undefined) update.images = images;
-        if (pricing_unit !== undefined) update.pricing_unit = pricing_unit;
-        if (pricing_options !== undefined) update.pricing_options = pricing_options;
-
-        if (Object.keys(update).length === 0) {
-            return reply.code(400).send({
-                success: 0,
-                message: "No fields provided to update"
-            });
-        }
-
-       
-        const data = await MenuService.updateData({restaurantId : restaurantId, itemId : itemId}, update);
-
-        if (!data) {
-            return reply.code(404).send({
-                success: 0,
-                message: "Menu item not found"
-            });
-        }
-
-        return reply.code(200).send({
-            success: 1,
-            message: "Menu item updated successfully",
-            data
+      if (!restaurantId || !itemId) {
+        return reply.code(400).send({
+          success: 0,
+          message: "Invalid request"
         });
+      }
+
+      // Pull only fields you allow to be updated
+      const {
+        name,
+        description,
+        type,
+        available,
+        category,
+        images,
+        pricing_unit,
+        pricing_options
+      } = request.body;
+
+      // Build update payload only with provided fields (partial update)
+      const update = {};
+      if (restaurantId !== undefined) update.restaurantId = restaurantId;
+      if (itemId !== undefined) update.itemId = itemId;
+      if (name !== undefined) update.name = name;
+      if (description !== undefined) update.description = description;
+      if (type !== undefined) update.type = type;
+      if (available !== undefined) update.available = available;
+      if (category !== undefined) update.category = category;
+      if (images !== undefined) update.images = images;
+      if (pricing_unit !== undefined) update.pricing_unit = pricing_unit;
+      if (pricing_options !== undefined) update.pricing_options = pricing_options;
+
+      if (Object.keys(update).length === 0) {
+        return reply.code(400).send({
+          success: 0,
+          message: "No fields provided to update"
+        });
+      }
+
+
+      const data = await MenuService.updateData({ restaurantId: restaurantId, itemId: itemId }, update);
+
+      if (!data) {
+        return reply.code(404).send({
+          success: 0,
+          message: "Menu item not found"
+        });
+      }
+
+      return reply.code(200).send({
+        success: 1,
+        message: "Menu item updated successfully",
+        data
+      });
     } catch (error) {
-        console.error(error);
-        return reply.code(500).send({
-            success: 0,
-            message: "Failed to update menu item"
-        });
+      console.error(error);
+      return reply.code(500).send({
+        success: 0,
+        message: "Failed to update menu item"
+      });
     }
-},
+  },
 
   deleteMenuItem: async (request, reply) => {
     try {
@@ -352,7 +352,7 @@ const menuController = {
         });
       }
 
-      await MenuService.deleteData({ restaurantId,  itemId });
+      await MenuService.deleteData({ restaurantId, itemId });
 
       return reply.code(200).send({
         success: true,
@@ -456,72 +456,72 @@ const menuController = {
     }
   },
 
- searchMenuItems: async (request, reply) => {
-  try {
-    const { restaurantId } = request.params;
-    if (!restaurantId) {
-      return reply.code(400).send({
+  searchMenuItems: async (request, reply) => {
+    try {
+      const { restaurantId } = request.params;
+      if (!restaurantId) {
+        return reply.code(400).send({
+          success: 0,
+          message: "Invalid request.",
+        });
+      }
+
+      let { query, category } = request.query; // e.g. /api/menu/search?query=pizza&category=Pizza
+
+      // Remove quotation marks if present
+      if (query && typeof query === 'string') {
+        query = query.replace(/^"(.*)"$/, '$1');
+      }
+
+      if (category && typeof category === 'string') {
+        category = category.replace(/^"(.*)"$/, '$1');
+      }
+
+      // Initialize filter with restaurant ID
+      let filter = { restaurantId: { $eq: restaurantId } };
+
+      // Add text search if query is provided
+      if (query && query.trim() !== "") {
+        filter.$text = { $search: query };
+      }
+
+      // Add category filter if category is provided and not "NA"
+      if (category && category.trim() !== "" && category !== "NA") {
+        filter.category = category;
+      }
+
+      // If neither query nor valid category is provided, return error
+      if ((!query || query.trim() === "") && (!category || category === "NA")) {
+        return reply.code(400).send({
+          success: 0,
+          message: "Search query or valid category is required.",
+        });
+      }
+
+      const select = { _id: 0, name: 1, description: 1, category: 1, images: 1 };
+
+      const data = await MenuService.getData(filter, select);
+
+      if (!data || data.length === 0) {
+        return reply.code(404).send({
+          success: 0,
+          message: "No menu items found.",
+        });
+      }
+
+      return reply.code(200).send({
+        success: 1,
+        count: data.length,
+        data,
+      });
+    } catch (error) {
+      console.error("Search error:", error);
+      return reply.code(500).send({
         success: 0,
-        message: "Invalid request.",
+        message: "Server error while searching menu items.",
       });
     }
-
-    let { query, category } = request.query; // e.g. /api/menu/search?query=pizza&category=Pizza
-    
-    // Remove quotation marks if present
-    if (query && typeof query === 'string') {
-      query = query.replace(/^"(.*)"$/, '$1');
-    }
-    
-    if (category && typeof category === 'string') {
-      category = category.replace(/^"(.*)"$/, '$1');
-    }
-    
-    // Initialize filter with restaurant ID
-    let filter = { restaurantId: { $eq: restaurantId } };
-    
-    // Add text search if query is provided
-    if (query && query.trim() !== "") {
-      filter.$text = { $search: query };
-    }
-    
-    // Add category filter if category is provided and not "NA"
-    if (category && category.trim() !== "" && category !== "NA") {
-      filter.category = category;
-    }
-    
-    // If neither query nor valid category is provided, return error
-    if ((!query || query.trim() === "") && (!category || category === "NA")) {
-      return reply.code(400).send({
-        success: 0,
-        message: "Search query or valid category is required.",
-      });
-    }
-
-    const select = { _id: 0, name: 1, description: 1, category: 1, images: 1 };
-    
-    const data = await MenuService.getData(filter, select);
-
-    if(!data || data.length === 0){
-      return reply.code(404).send({
-        success: 0,
-        message: "No menu items found.",
-      });
-    }
-
-    return reply.code(200).send({
-      success: 1,
-      count: data.length,
-      data,
-    });
-  } catch (error) {
-    console.error("Search error:", error);
-    return reply.code(500).send({
-      success: 0,
-      message: "Server error while searching menu items.",
-    });
   }
- }
 };
 
 export default menuController;

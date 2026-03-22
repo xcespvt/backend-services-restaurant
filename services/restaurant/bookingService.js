@@ -1,6 +1,6 @@
 "use strict";
 
-import DATA_MODEL from "../models/menuSchema.js";
+import DATA_MODEL from "../../models/restaurant/bookingModel.js";
 
 
 const services = {
@@ -69,24 +69,21 @@ const services = {
     },
 
     addData: async (data) => {
-
-        let newDoc = null;
-
         try {
+            // If multiple tables → use insertMany
+            if (Array.isArray(data)) {
+                return await DATA_MODEL.insertMany(data, { ordered: true });
+            }
 
-            let dataObj = new DATA_MODEL(data);
-
-            let newDoc = await dataObj.save();
-  
-            return newDoc;
+            // Single insert fallback
+            return await DATA_MODEL.create(data);
 
         } catch (e) {
-
-            console.error(e.message);
+            console.error("addData ERROR:", e);
+            throw e;
         }
-
-        return newDoc;
     },
+
     getCountDocument: async (filter) => {
 
         let count = 0;

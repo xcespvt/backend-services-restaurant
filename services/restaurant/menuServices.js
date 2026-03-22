@@ -1,6 +1,6 @@
 "use strict";
 
-import DATA_MODEL from "../models/offerModel.js";
+import DATA_MODEL from "../../models/restaurant/menuSchema.js";
 
 
 const services = {
@@ -52,13 +52,13 @@ const services = {
         return data;
     },
 
-    updateData: async (findFilter, updateData, options = { new: true }) => {
+    updateData: async (findFilter, updateData) => {
 
         let data = [];
 
         try {
 
-            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, options).lean();
+            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, { new: true }).lean();
 
         } catch (e) {
 
@@ -75,7 +75,9 @@ const services = {
         try {
 
             let dataObj = new DATA_MODEL(data);
+
             let newDoc = await dataObj.save();
+
             return newDoc;
 
         } catch (e) {
@@ -100,6 +102,7 @@ const services = {
 
         return count;
     },
+
 };
 
 export default services;

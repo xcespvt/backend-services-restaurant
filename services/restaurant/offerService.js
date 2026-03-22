@@ -1,6 +1,6 @@
 "use strict";
 
-import DATA_MODEL from "../models/bookingModel.js";
+import DATA_MODEL from "../../models/restaurant/offerModel.js";
 
 
 const services = {
@@ -52,13 +52,13 @@ const services = {
         return data;
     },
 
-    updateData: async (findFilter, updateData) => {
+    updateData: async (findFilter, updateData, options = { new: true }) => {
 
         let data = [];
 
         try {
 
-            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, { new: true }).lean();
+            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, options).lean();
 
         } catch (e) {
 
@@ -69,21 +69,22 @@ const services = {
     },
 
     addData: async (data) => {
-        try {
-            // If multiple tables → use insertMany
-            if (Array.isArray(data)) {
-                return await DATA_MODEL.insertMany(data, { ordered: true });
-            }
 
-            // Single insert fallback
-            return await DATA_MODEL.create(data);
+        let newDoc = null;
+
+        try {
+
+            let dataObj = new DATA_MODEL(data);
+            let newDoc = await dataObj.save();
+            return newDoc;
 
         } catch (e) {
-            console.error("addData ERROR:", e);
-            throw e;
-        }
-    },
 
+            console.error(e.message);
+        }
+
+        return newDoc;
+    },
     getCountDocument: async (filter) => {
 
         let count = 0;
@@ -99,7 +100,6 @@ const services = {
 
         return count;
     },
-
 };
 
 export default services;

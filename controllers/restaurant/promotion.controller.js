@@ -1,5 +1,5 @@
 "use strict";
-import PromotionService from "../services/promotionService.js";
+import PromotionService from "../../services/promotionService.js";
 
 import { v7 as uuidv7 } from "uuid";
 

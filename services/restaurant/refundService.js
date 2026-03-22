@@ -1,17 +1,17 @@
 "use strict";
 
-import Refund from "../models/refundModel.js";
-import Order from "../models/orderModel.js";
+import Refund from "../../models/restaurant/refundModel.js";
+import Order from "../../models/restaurant/orderModel.js";
 
 const refundService = {
   getAllRefunds: async (branchId, status) => {
     try {
       const filter = { branchId };
-      
+
       if (status) {
         filter.status = status;
       }
-      
+
       const refunds = await Refund.find(filter).lean();
       return refunds;
     } catch (error) {
@@ -19,31 +19,31 @@ const refundService = {
       throw error;
     }
   },
-  
+
   getRefundDetails: async (branchId, refundId) => {
     try {
       const refund = await Refund.findOne({ refundId, branchId }).lean();
-      
+
       if (!refund) {
         throw new Error("Refund not found");
       }
-      
+
       return refund;
     } catch (error) {
       console.error(error.message);
       throw error;
     }
   },
-  
+
   createRefundRequest: async (branchId, orderId, reason, items, photos = []) => {
     try {
       // Get order details
       const order = await Order.findOne({ orderId, branchId }).lean();
-      
+
       if (!order) {
         throw new Error("Order not found");
       }
-      
+
       // Calculate refund amount based on items
       let amount = 0;
       if (items && items.length > 0) {
@@ -58,7 +58,7 @@ const refundService = {
         // Full refund
         amount = order.total;
       }
-      
+
       // Create refund request
       const refund = new Refund({
         branchId,
@@ -78,7 +78,7 @@ const refundService = {
           platform: 0
         }
       });
-      
+
       const savedRefund = await refund.save();
       return savedRefund;
     } catch (error) {
@@ -86,12 +86,12 @@ const refundService = {
       throw error;
     }
   },
-  
+
   updateRefundStatus: async (branchId, refundId, status, notes, processedBy) => {
     try {
       const refund = await Refund.findOneAndUpdate(
         { refundId, branchId },
-        { 
+        {
           status,
           notes,
           processedBy,
@@ -99,18 +99,18 @@ const refundService = {
         },
         { new: true }
       ).lean();
-      
+
       if (!refund) {
         throw new Error("Refund not found");
       }
-      
+
       return refund;
     } catch (error) {
       console.error(error.message);
       throw error;
     }
   },
-  
+
   updateCostSplit: async (branchId, refundId, costSplit) => {
     try {
       const refund = await Refund.findOneAndUpdate(
@@ -118,11 +118,11 @@ const refundService = {
         { costSplit },
         { new: true }
       ).lean();
-      
+
       if (!refund) {
         throw new Error("Refund not found");
       }
-      
+
       return refund;
     } catch (error) {
       console.error(error.message);

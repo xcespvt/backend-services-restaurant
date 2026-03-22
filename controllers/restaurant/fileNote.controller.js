@@ -1,4 +1,4 @@
-import { supabase } from '../config/db.js';
+import { supabase } from '../../config/db.js';
 
 const fileNoteController = {
     // Create a new file note configuration
@@ -78,7 +78,7 @@ const fileNoteController = {
     getFileNoteById: async (req, res) => {
         try {
             const { id } = req.params;
-            
+
             const { data, error } = await supabase
                 .from('file_notes')
                 .select('*')

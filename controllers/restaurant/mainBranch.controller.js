@@ -1,5 +1,5 @@
 "use strict";
-import mainBranchService from "../services/mainBranchService.js";
+import mainBranchService from "../../services/mainBranchService.js";
 
 const mainBranchController = {
   getMainBranches: async (request, reply) => {
