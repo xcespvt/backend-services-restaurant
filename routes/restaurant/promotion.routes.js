@@ -1,6 +1,6 @@
 "use strict";
 
-import promotionController from "../controllers/promotion.controller.js";
+import promotionController from "../../controllers/restaurant/promotion.controller.js";
 
 async function promotionRoutes(fastify, options) {
   // 🧾 Get all promotions

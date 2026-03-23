@@ -1,7 +1,7 @@
 "use strict";
 
-import User from "../models/userModel.js";
-import Employee from "../models/employeeModel.js";
+import User from "../../models/restaurant/userModel.js";
+import Employee from "../../models/restaurant/employeeModel.js";
 
 const authService = {
   registerUser: async (userData) => {

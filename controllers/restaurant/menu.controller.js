@@ -1,5 +1,5 @@
 "use strict";
-import MenuService from "../../services/menuServices.js";
+import MenuService from "../../services/restaurant/menuServices.js";
 import { v7 as uuidv7 } from "uuid";
 import fetch from 'node-fetch';
 import FormData from 'form-data';

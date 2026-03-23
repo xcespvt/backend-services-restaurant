@@ -14,18 +14,18 @@ import { connectDB, testConnection } from "./config/db.js";
 
 // 📁 Route plugins (make sure each route file exports an async function)
 // import restaurantRoutes from "./routes/restaurant.routes.js";
-import authRoutes from "./routes/auth.routes.js";
-import branchRoutes from "./routes/branch.routes.js";
-import menuRoutes from "./routes/menu.routes.js";
-import orderRoutes from "./routes/order.routes.js";
-import bookingRoutes from "./routes/booking.routes.js";
-import tableRoutes from "./routes/table.routes.js";
-import feedbackRoutes from "./routes/feedback.routes.js";
-import refundRoutes from "./routes/refund.routes.js";
-import settingRoutes from "./routes/setting.routes.js";
-import analyticsRoutes from "./routes/analytics.routes.js";
-import offersRoutes from "./routes/offers.routes.js";
-import promotionRoutes from "./routes/promotion.routes.js";
+import authRoutes from "./routes/restaurant/auth.routes.js";
+import branchRoutes from "./routes/restaurant/branch.routes.js";
+import menuRoutes from "./routes/restaurant/menu.routes.js";
+import orderRoutes from "./routes/restaurant/order.routes.js";
+import bookingRoutes from "./routes/restaurant/booking.routes.js";
+import tableRoutes from "./routes/restaurant/table.routes.js";
+import feedbackRoutes from "./routes/restaurant/feedback.routes.js";
+import refundRoutes from "./routes/restaurant/refund.routes.js";
+import settingRoutes from "./routes/restaurant/setting.routes.js";
+import analyticsRoutes from "./routes/restaurant/analytics.routes.js";
+import offersRoutes from "./routes/restaurant/offers.routes.js";
+import promotionRoutes from "./routes/restaurant/promotion.routes.js";
 
 const app = Fastify({ logger: false });
 const port = process.env.PORT || 3000;

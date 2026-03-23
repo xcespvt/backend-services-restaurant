@@ -1,6 +1,6 @@
 "use strict";
 
-import orderService from "../../services/orderService.js";
+import orderService from "../../services/restaurant/orderService.js";
 
 const orderController = {
   getAllOrders: async (req, res) => {

@@ -1,7 +1,7 @@
 "use strict";
 
 import express from "express";
-import refundController from "../controllers/refund.controller.js";
+import refundController from "../../controllers/restaurant/refund.controller.js";
 
 const router = express.Router();
 

@@ -1,7 +1,7 @@
 "use strict";
 
-import offerController from "../controllers/offer.controller.js";
-import { authMiddleware } from "../middleware/auth.middleware.js";
+import offerController from "../../controllers/restaurant/offer.controller.js";
+import { authMiddleware } from "../../middleware/restaurant/auth.middleware.js";
 
 
 async function offersRoutes(fastify, options) {

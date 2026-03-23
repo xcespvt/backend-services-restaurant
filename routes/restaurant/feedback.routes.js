@@ -1,8 +1,8 @@
 "use strict";
 
 import express from "express";
-import feedbackController from "../controllers/feedback.controller.js";
-import { authMiddleware } from "../middleware/auth.middleware.js";
+import feedbackController from "../../controllers/restaurant/feedback.controller.js";
+import { authMiddleware } from "../../middleware/restaurant/auth.middleware.js";
 
 const router = express.Router();
 

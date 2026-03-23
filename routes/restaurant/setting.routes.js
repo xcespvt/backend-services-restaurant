@@ -1,7 +1,7 @@
 "use strict";
 
 import express from "express";
-import settingController from "../controllers/setting.controller.js";
+import settingController from "../../controllers/restaurant/setting.controller.js";
 
 const router = express.Router();
 

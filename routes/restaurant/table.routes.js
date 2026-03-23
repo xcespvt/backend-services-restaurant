@@ -1,8 +1,8 @@
 "use strict";
 
-import tableController from "../controllers/table.controller.js";
-import tableTypeController from "../controllers/tabletype.controller.js";
-import { authMiddleware } from "../middleware/auth.middleware.js";
+import tableController from "../../controllers/restaurant/table.controller.js";
+import tableTypeController from "../../controllers/restaurant/tabletype.controller.js";
+import { authMiddleware } from "../../middleware/restaurant/auth.middleware.js";
 
 async function tableRoutes(fastify) {
     // Get all tables for a branch
@@ -25,6 +25,8 @@ async function tableRoutes(fastify) {
 
     // Update table status
     fastify.patch("/:branchId/:tableId/status", { preHandler: authMiddleware }, tableController.updateTableStatus);
+
+    
 }
 
 export default tableRoutes;

@@ -1,7 +1,7 @@
 "use strict";
 
 
-import bookingService from "../../services/bookingService.js";
+import bookingService from "../../services/restaurant/bookingService.js";
 import { v7 as uuidv7 } from 'uuid';
 
 const bookingController = {

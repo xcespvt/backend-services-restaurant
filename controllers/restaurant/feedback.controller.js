@@ -1,6 +1,6 @@
 "use strict";
 
-import feedbackService from "../../services/feedbackService.js";
+import feedbackService from "../../services/restaurant/feedbackService.js";
 
 const feedbackController = {
   getAllFeedback: async (req, res) => {

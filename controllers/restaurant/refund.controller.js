@@ -1,6 +1,6 @@
 "use strict";
 
-import refundService from "../../services/refundService.js";
+import refundService from "../../services/restaurant/refundService.js";
 
 const refundController = {
   getAllRefunds: async (req, res) => {

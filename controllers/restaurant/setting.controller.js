@@ -1,6 +1,6 @@
 "use strict";
 
-import settingService from "../../services/settingService.js";
+import settingService from "../../services/restaurant/settingService.js";
 
 const settingController = {
   getSettings: async (req, res) => {

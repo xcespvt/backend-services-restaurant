@@ -1,5 +1,5 @@
-import menuController from "../controllers/menu.controller.js";
-import { authMiddleware } from "../middleware/auth.middleware.js";
+import menuController from "../../controllers/restaurant/menu.controller.js";
+import { authMiddleware } from "../../middleware/restaurant/auth.middleware.js";
 async function menuRoutes(fastify, options) {
 
   // Get all menu items for a branch

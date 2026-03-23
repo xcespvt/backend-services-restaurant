@@ -1,5 +1,5 @@
 "use strict";
-import OfferService from "../../services/offerService.js";
+import OfferService from "../../services/restaurant/offerService.js";
 
 import { v7 as uuidv7 } from "uuid";
 // Rest of your controller code...

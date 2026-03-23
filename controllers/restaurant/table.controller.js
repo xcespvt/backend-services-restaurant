@@ -1,6 +1,6 @@
 "use strict";
 
-import tableService from "../../services/tableService.js";
+import tableService from "../../services/restaurant/tableService.js";
 
 const tableController = {
   getAllTables: async (req, res) => {

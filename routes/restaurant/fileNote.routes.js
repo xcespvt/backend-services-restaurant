@@ -1,5 +1,5 @@
 import express from 'express';
-import fileNoteController from '../controllers/fileNote.controller.js';
+import fileNoteController from '../../controllers/restaurant/fileNote.controller.js';
 import multer from 'multer';
 import path from 'path';
 

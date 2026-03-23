@@ -1,7 +1,7 @@
 "use strict";
 
-import { authMiddleware } from "../middleware/auth.middleware.js";
-import mainBranchController from "../controllers/mainBranch.controller.js";
+import { authMiddleware } from "../../middleware/restaurant/auth.middleware.js";
+import mainBranchController from "../../controllers/restaurant/mainBranch.controller.js";
 
 async function branchRoutes(fastify) {
   // Branch routes
