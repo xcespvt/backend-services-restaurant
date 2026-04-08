@@ -6,10 +6,10 @@ import analyticsController from "../../controllers/restaurant/analytics.controll
 const router = express.Router();
 
 // Get order analytics for a branch
-router.get("/:branchId/orders", analyticsController.getOrderAnalytics);
+router.get("/:branchId/orders", authMiddleware, checkRole(['MANAGER', 'STAFF', 'CASHIER', 'CHEF', 'WAITER']), analyticsController.getOrderAnalytics);
 
 // Get customer analytics for a branch
-router.get("/:branchId/customers", analyticsController.getCustomerAnalytics);
+router.get("/:branchId/customers", authMiddleware, checkRole(['MANAGER', 'STAFF', 'CASHIER', 'CHEF', 'WAITER']), analyticsController.getCustomerAnalytics);
 
 // Get feedback analytics for a branch
 router.get("/:branchId/feedback", analyticsController.getFeedbackAnalytics);

@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
-import mainBranchModel from "../../models/restaurant/mainBranch.js";
-
+import Login from "../../models/restaurant/loginModel.js";
 
 export const authMiddleware = async (request, reply) => {
-  const token = request.cookies?.token; // Fastify way
+  const token = request.cookies?.token;
 
   if (!token) {
     reply.code(401).send({ message: "Unauthorized: No token" });
@@ -12,13 +11,33 @@ export const authMiddleware = async (request, reply) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const email = await mainBranchModel.findOne({ "contact.email": decoded.email });
-    if (!email) {
-      reply.code(403).send({ message: "Forbidden" });
+    const login = await Login.findOne({ emailId: decoded.email, isActive: true });
+    
+    if (!login) {
+      reply.code(403).send({ message: "Forbidden: Account not found or inactive" });
       return;
-    } 
-    request.user = decoded; // attach user (Fastify)
+    }
+
+    request.user = {
+      email: decoded.email,
+      role: login.role,
+      referenceId: login.referenceId
+    };
   } catch (error) {
     reply.code(401).send({ success: 0, message: "Not Authorized : Invalid token" });
   }
+};
+
+export const checkRole = (roles) => {
+  return async (request, reply) => {
+    if (!request.user) {
+      reply.code(401).send({ message: "Unauthorized" });
+      return;
+    }
+
+    if (!roles.includes(request.user.role)) {
+      reply.code(403).send({ message: "Forbidden: Insufficient permissions" });
+      return;
+    }
+  };
 };

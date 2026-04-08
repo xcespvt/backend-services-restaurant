@@ -1,77 +1,65 @@
-"use strict";
-
+import loginService from "./loginService.js";
 import User from "../../models/restaurant/userModel.js";
 import Employee from "../../models/restaurant/employeeModel.js";
 
 const authService = {
-  registerUser: async (userData) => {
-    try {
-      // In a real implementation, you would hash the password here
-      const user = new User(userData);
-      const savedUser = await user.save();
-      
-      // Return user data without sensitive information
-      const result = {
-        userId: savedUser.userId,
-        // In a real implementation, you would generate a JWT token here
-        token: "jwt-token"
-      };
-      
-      return result;
-    } catch (error) {
-      console.error(error.message);
-      throw error;
-    }
-  },
-  
   loginUser: async (email, password) => {
     try {
-      // In a real implementation, you would verify the password here
-      const user = await User.findOne({ email }).lean();
+      const login = await loginService.findByEmail(email);
       
-      if (!user) {
+      if (!login || login.role !== 'USER') {
         throw new Error("Invalid credentials");
       }
       
-      // Return user data without sensitive information
-      const result = {
-        userId: user.userId,
-        // In a real implementation, you would generate a JWT token here
-        token: "jwt-token",
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        whatsapp: user.whatsapp,
-        subscriptionPlan: user.subscriptionPlan
-      };
+      const isMatch = await loginService.verifyPassword(password, login.passwordHash);
+      if (!isMatch) {
+        throw new Error("Invalid credentials");
+      }
+
+      const user = await User.findOne({ email }).lean();
+      if (!user) {
+        throw new Error("User details not found");
+      }
       
-      return result;
+      return {
+        userId: user.userId,
+        email: user.email,
+        name: user.name,
+        role: login.role,
+        referenceId: login.referenceId
+      };
     } catch (error) {
       console.error(error.message);
       throw error;
     }
   },
   
-  loginEmployee: async (employeeId, password, branchId) => {
+  loginEmployee: async (email, password) => {
     try {
-      // In a real implementation, you would verify the password here
-      const employee = await Employee.findOne({ employeeId, branchId }).lean();
+      const login = await loginService.findByEmail(email);
       
-      if (!employee) {
+      const allowedRoles = ['MANAGER', 'STAFF', 'CASHIER', 'CHEF', 'WAITER'];
+      if (!login || !allowedRoles.includes(login.role)) {
         throw new Error("Invalid credentials");
       }
       
-      // Return employee data without sensitive information
-      const result = {
-        employeeId: employee.employeeId,
-        // In a real implementation, you would generate a JWT token here
-        token: "jwt-token",
-        name: employee.name,
-        role: employee.role,
-        branchId: employee.branchId
-      };
+      const isMatch = await loginService.verifyPassword(password, login.passwordHash);
+      if (!isMatch) {
+        throw new Error("Invalid credentials");
+      }
+
+      const employee = await Employee.findOne({ email }).lean();
+      if (!employee) {
+        throw new Error("Employee details not found");
+      }
       
-      return result;
+      return {
+        employeeId: employee.employeeId,
+        name: employee.name,
+        role: login.role,
+        branchId: employee.branchId,
+        referenceId: login.referenceId
+      };
     } catch (error) {
       console.error(error.message);
       throw error;
@@ -79,4 +67,4 @@ const authService = {
   }
 };
 
-export default authService;
+export default authService;

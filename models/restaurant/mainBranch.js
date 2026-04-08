@@ -41,11 +41,6 @@ const mainBranchSchema = new Schema({
     },
     website: String
   },
-  password: {
-    type: String,
-    required: true,
-    trim: true
-  },
   isOnline: {
     type: Boolean,
     default: true

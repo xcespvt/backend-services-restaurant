@@ -1,6 +1,7 @@
 "use strict";
 
 import Otp from "../../models/restaurant/otpModel.js";
+import loginService from "../../services/restaurant/loginService.js";
 import mainBranchModel from "../../models/restaurant/mainBranch.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -17,8 +18,8 @@ const otpController = {
       if (!email)
         return reply.code(400).send({ success: false, message: "Email is required" });
 
-      const mainBranch = await mainBranchModel.findOne({ "contact.email": email });
-      if (!mainBranch) {
+      const login = await loginService.findByEmail(email);
+      if (!login) {
         return reply.code(400).send({
           success: false,
           message: "Email is not registered",
@@ -50,15 +51,15 @@ const otpController = {
       const { email, otp, password } = request.body;
 
       if (password) {
-        const user = await mainBranchModel.findOne({ "contact.email": email });
-        if (!user) {
+        const login = await loginService.findByEmail(email);
+        if (!login) {
           return reply.code(400).send({
             success: false,
             message: "Invalid email or password",
           });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await loginService.verifyPassword(password, login.passwordHash);
         if (!isMatch) {
           return reply.code(400).send({
             success: false,
@@ -66,10 +67,16 @@ const otpController = {
           });
         }
 
-        // Generate JWT token
-        const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-          expiresIn: "365d",
-        });
+        // Generate JWT token with role and referenceId
+        const token = jwt.sign(
+          { 
+            email, 
+            role: login.role, 
+            referenceId: login.referenceId 
+          }, 
+          process.env.JWT_SECRET, 
+          { expiresIn: "365d" }
+        );
 
         // Set JWT as HTTP-only cookie
         reply.setCookie("token", token, {
@@ -83,6 +90,10 @@ const otpController = {
         return reply.code(200).send({
           success: true,
           message: "Logged in successfully",
+          user: {
+            email: login.emailId,
+            role: login.role
+          }
         });
       }
 
@@ -106,9 +117,16 @@ const otpController = {
       await Otp.deleteMany({ email });
 
       // Generate JWT token
-      const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-        expiresIn: "365d",
-      });
+      const login = await loginService.findByEmail(email);
+      const token = jwt.sign(
+        { 
+          email, 
+          role: login ? login.role : 'USER', 
+          referenceId: login ? login.referenceId : null 
+        }, 
+        process.env.JWT_SECRET, 
+        { expiresIn: "365d" }
+      );
 
       // 🍪 Set JWT as HTTP-only cookie
       reply.setCookie("token", token, {
