@@ -26,7 +26,7 @@ const loginSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['SUPER_ADMIN', 'ADMIN', 'RESTAURANT', 'MANAGER', 'STAFF', 'CASHIER', 'CHEF', 'WAITER', 'USER'],
+    enum: ['SUPER_ADMIN', 'ADMIN', 'RESTAURANT', 'MANAGER', 'STAFF', 'CASHIER', 'CHEF', 'WAITER', 'USER', 'DELIVERY_PARTNER', 'DELIVERY_ADMIN'],
     required: true
   },
   referenceId: {

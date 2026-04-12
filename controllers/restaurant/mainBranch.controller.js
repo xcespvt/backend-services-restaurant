@@ -5,7 +5,7 @@ const mainBranchController = {
   getMainBranches: async (request, reply) => {
     try {
       const filter = { "contact.email": request.user.email };
-      const data = await mainBranchService.getData(filter);
+      const data = await mainBranchService.getData(filter, "-password");
       return reply.code(200).send({
         success: true,
         message: "Main Branches retrieved successfully",
