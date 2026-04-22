@@ -178,6 +178,95 @@ const mainBranchController = {
         error: error.message
       });
     }
+  },
+
+  upsertFloor: async (request, reply) => {
+    try {
+      const { branchId } = request.params;
+      const { floorId, name } = request.body;
+      const user = request.user;
+
+      if (!branchId || !name) {
+        return reply.code(400).send({
+          success: false,
+          message: "Branch ID and Floor name are required"
+        });
+      }
+
+      const filter = { branchId, "contact.email": user.email };
+      let update;
+      let options = {};
+
+      if (floorId) {
+        // Update existing floor
+        update = { $set: { "floors.$[elem].name": name } };
+        options = { arrayFilters: [{ "elem.floorId": floorId }] };
+      } else {
+        // Add new floor
+        update = { $push: { floors: { name } } };
+      }
+
+      const updatedBranch = await mainBranchService.updateData(filter, update, options);
+
+      if (!updatedBranch) {
+        return reply.code(404).send({
+          success: false,
+          message: "Branch not found or unauthorized"
+        });
+      }
+
+      return reply.code(200).send({
+        success: true,
+        message: floorId ? "Floor updated successfully" : "Floor added successfully",
+        data: updatedBranch.floors
+      });
+    } catch (error) {
+      console.error(error.message);
+      return reply.code(500).send({
+        success: false,
+        message: "Error processing floor",
+        error: error.message
+      });
+    }
+  },
+
+  deleteFloor: async (request, reply) => {
+    try {
+      const { branchId, floorId } = request.params;
+      const user = request.user;
+
+      if (!branchId || !floorId) {
+        return reply.code(400).send({
+          success: false,
+          message: "Branch ID and Floor ID are required"
+        });
+      }
+
+      const filter = { branchId, "contact.email": user.email };
+      const update = { $pull: { floors: { floorId } } };
+
+      const updatedBranch = await mainBranchService.updateData(filter, update);
+
+      if (!updatedBranch) {
+        return reply.code(404).send({
+          success: false,
+          message: "Branch not found or unauthorized"
+        });
+      }
+
+      return reply.code(200).send({
+        success: true,
+        message: "Floor deleted successfully",
+        data: updatedBranch.floors
+      });
+    } catch (error) {
+      console.error(error.message);
+      return reply.code(500).send({
+        success: false,
+        message: "Error deleting floor",
+        error: error.message
+      });
+    }
   }
 
 };

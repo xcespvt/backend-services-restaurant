@@ -108,6 +108,16 @@ const mainBranchSchema = new Schema({
       booking: { type: Boolean, default: false }
     }
   },
+  floors: [{
+    floorId: {
+      type: String,
+      default: () => uuidv7()
+    },
+    name: {
+      type: String,
+      required: true
+    }
+  }],
   isActive: {
     type: Boolean,
     default: true

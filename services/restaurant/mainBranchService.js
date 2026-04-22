@@ -52,19 +52,16 @@ const services = {
         return data;
     },
 
-    updateData: async (findFilter, updateData) => {
-
-        let data = [];
-
+    updateData: async (findFilter, updateData, options = {}) => {
+        let data = null;
         try {
-
-            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, { returnDocument: 'after' }).lean();
-
+            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, { 
+                returnDocument: 'after',
+                ...options 
+            }).lean();
         } catch (e) {
-
             console.error(e.message);
         }
-
         return data;
     },
 

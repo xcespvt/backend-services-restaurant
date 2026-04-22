@@ -68,7 +68,7 @@ const bookingController = {
   addTableSeries: async (request, reply) => {
     try {
       const { restaurantId } = request.params;
-      const { prefix, startNumber, endNumber, capacity, type } = request.body;
+      const { prefix, startNumber, endNumber, capacity, type, tableTypeId, floor } = request.body;
 
       if (!restaurantId) {
         return reply.code(400).send({
@@ -139,7 +139,9 @@ const bookingController = {
         tableId: uuidv7(),
         name,
         capacity: Number(capacity),
+        tableTypeId,
         type,
+        floor: floor || 'Ground Floor',
         status: "Available"
       }));
       // ================================
