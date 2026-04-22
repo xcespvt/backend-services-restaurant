@@ -31,7 +31,6 @@ const authController = {
       // For now just create record, email service can be added later
       await Otp.create({ email, otp });
       
-      console.log(`OTP for ${email}: ${otp}`); // Dev log
 
       return reply.code(200).send({
         success: true,

@@ -100,6 +100,18 @@ const services = {
 
         return count;
     },
+    deleteData: async (filter) => {
+        try {
+            const result = await DATA_MODEL.findOneAndDelete(filter).lean();
+            if (!result) {
+                throw new Error("Offer not found");
+            }
+            return result;
+        } catch (e) {
+            console.error(e.message);
+            throw e;
+        }
+    },
 };
 
 export default services;

@@ -58,7 +58,7 @@ const services = {
 
         try {
 
-            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, { new: true }).lean();
+            data = await DATA_MODEL.findOneAndUpdate(findFilter, updateData, { returnDocument: 'after' }).lean();
 
         } catch (e) {
 

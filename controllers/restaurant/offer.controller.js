@@ -320,34 +320,34 @@ const offerController = {
 
     deleteOffers: async (request, reply) => {
         try {
-            const { restaurantId, itemId } = request.params;
+            const { restaurantId, offerId } = request.params;
 
-            if (!restaurantId || !itemId) {
+            if (!restaurantId || !offerId) {
                 return reply.code(400).send({
                     success: false,
-                    message: "Branch ID and Item ID are required"
+                    message: "Restaurant ID and Offer ID are required"
                 });
             }
 
-            await OfferService.deleteData({ restaurantId, itemId });
+            await OfferService.deleteData({ restaurantId, offerId });
 
             return reply.code(200).send({
                 success: true,
-                message: "Menu item deleted successfully"
+                message: "Offer deleted successfully"
             });
         } catch (error) {
             console.error(error.message);
 
-            if (error.message === "Menu item not found") {
+            if (error.message === "Offer not found") {
                 return reply.code(404).send({
                     success: false,
-                    message: "Menu item not found"
+                    message: "Offer not found"
                 });
             }
 
             return reply.code(500).send({
                 success: false,
-                message: "Error deleting menu item",
+                message: "Error deleting offer",
                 error: error.message
             });
         }
@@ -385,16 +385,16 @@ const offerController = {
         } catch (error) {
             console.error(error.message);
 
-            if (error.message === "Menu item not found") {
+            if (error.message === "Offer not found") {
                 return reply.code(404).send({
                     success: false,
-                    message: "Menu item not found"
+                    message: "Offer not found"
                 });
             }
 
             return reply.code(500).send({
                 success: false,
-                message: "Error toggling menu item availability",
+                message: "Error toggling offer availability",
                 error: error.message
             });
         }
