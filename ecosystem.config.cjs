@@ -3,7 +3,7 @@ module.exports = {
   apps: [
     {
       name: "app",
-      script: "index.js",
+      script: "./dist/index.js",
       interpreter: "/home/rocky/.nvm/versions/node/v24.9.0/bin/node",
       env: {
         PATH: `/home/rocky/.nvm/versions/node/v24.9.0/bin:${process.env.PATH}`,
