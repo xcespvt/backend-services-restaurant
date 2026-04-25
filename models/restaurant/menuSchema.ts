@@ -63,6 +63,14 @@ const MenuItemSchema = new Schema({
     timestamps: true,
 });
 
+// Compound Indexes
+MenuItemSchema.index({ restaurantId: 1, category: 1 });
+MenuItemSchema.index({ restaurantId: 1, available: 1 });
+MenuItemSchema.index({ restaurantId: 1, itemId: 1 });
+
+// Text Index for Search
+MenuItemSchema.index({ name: 'text', description: 'text' });
+
 export default mongoose.model('menuSchema', MenuItemSchema,'menuSchema');
 
 

@@ -38,7 +38,7 @@ const FeedbackPhotoSchema = new Schema({
 }, { _id: false });
 
 const feedbackSchema = new Schema({
-  feedbackId: { 
+  feedbackId: {
     type: String,
     default: () => uuidv7(),
     unique: true,
@@ -96,9 +96,15 @@ const feedbackSchema = new Schema({
   replyDate: {
     type: Date
   }
-}, { 
-  timestamps: true 
+}, {
+  timestamps: true
 });
+
+// Compound Indexes
+feedbackSchema.index({ branchId: 1, date: -1 });
+feedbackSchema.index({ branchId: 1, rating: -1 });
+feedbackSchema.index({ branchId: 1, feedbackId: 1 });
+feedbackSchema.index({ branchId: 1, orderId: 1 });
 
 const Feedback = mongoose.model('Feedback', feedbackSchema);
 

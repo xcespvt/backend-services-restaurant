@@ -211,4 +211,7 @@ const mainBranchSchema = new Schema<IMainBranch>({
   timestamps: true
 });
 
+// Indexes
+mainBranchSchema.index({ "contact.email": 1 });
+
 export default mongoose.model<IMainBranch>('mainBranch', mainBranchSchema, 'mainBranch');

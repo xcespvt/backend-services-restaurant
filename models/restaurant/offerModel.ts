@@ -2,17 +2,17 @@ import mongoose from "mongoose";
 
 const Offer = new mongoose.Schema(
   {
-    restaurantId:{
-      type : "string",
-      required : true
+    restaurantId: {
+      type: "string",
+      required: true
     },
-    couponCode:{
-      type : "string",
-      required : true
+    couponCode: {
+      type: "string",
+      required: true
     },
-    offerId:{
-      type : "string",
-      required : true
+    offerId: {
+      type: "string",
+      required: true
     },
     offerTitle: {
       type: String,
@@ -67,15 +67,21 @@ const Offer = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    offerStatus : {
-      type : String,
-      enum : ["Active","Scheduled","Paused","Inactive"],
-      default : "Active"
+    offerStatus: {
+      type: String,
+      enum: ["Active", "Scheduled", "Paused", "Inactive"],
+      default: "Active"
     }
   },
-  { timestamps: { currentTime: () => new Date(Date.now() + (5.5 * 60 * 60 * 1000)) }
+  {
+    timestamps: { currentTime: () => new Date(Date.now() + (5.5 * 60 * 60 * 1000)) }
   }
 );
 
-export default mongoose.model('offersSchema',Offer, "offerSchema");
+// Compound Indexes
+Offer.index({ restaurantId: 1, offerStatus: 1 });
+Offer.index({ restaurantId: 1, couponCode: 1 });
+Offer.index({ restaurantId: 1, offerId: 1 });
+
+export default mongoose.model('offersSchema', Offer, "offerSchema");
 

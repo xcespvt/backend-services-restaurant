@@ -48,6 +48,11 @@ const employeeSchema = new Schema({
   timestamps: true 
 });
 
+// Compound Indexes
+employeeSchema.index({ branchId: 1, role: 1 });
+employeeSchema.index({ branchId: 1, isActive: 1 });
+employeeSchema.index({ branchId: 1, employeeId: 1 });
+
 const Employee = mongoose.model('Employee', employeeSchema);
 
 export default Employee;

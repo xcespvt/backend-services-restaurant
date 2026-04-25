@@ -141,6 +141,10 @@ const Promotions = new mongoose.Schema(
   },
 );
 
+// Compound Indexes
+Promotions.index({ restaurantId: 1, promotionStatus: 1 });
+Promotions.index({ restaurantId: 1, promotionId: 1 });
+
 export default mongoose.model(
   "promotionSchema",
   Promotions,

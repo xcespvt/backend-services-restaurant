@@ -8,9 +8,9 @@ const Schema = mongoose.Schema;
 
 const TableBookingSchema = new Schema({
     restaurantId: { type: String, index: true, unique: false },
-    tableId: { 
-        type: String, 
-        index: true, 
+    tableId: {
+        type: String,
+        index: true,
         unique: true,
         default: () => uuidv7()
     },
@@ -49,6 +49,12 @@ const TableBookingSchema = new Schema({
 }, {
     timestamps: true,
 });
+
+// Compound Indexes
+TableBookingSchema.index({ restaurantId: 1, status: 1 });
+TableBookingSchema.index({ restaurantId: 1, name: 1 });
+TableBookingSchema.index({ restaurantId: 1, tableId: 1 });
+TableBookingSchema.index({ restaurantId: 1, tableTypeId: 1 });
 
 export default mongoose.model('TableBooking', TableBookingSchema, 'TableBooking');
 

@@ -206,6 +206,12 @@ const orderSchema = new Schema({
   timestamps: true
 });
 
+// Compound Indexes
+orderSchema.index({ branchId: 1, date: -1 });
+orderSchema.index({ branchId: 1, status: 1 });
+orderSchema.index({ branchId: 1, type: 1 });
+orderSchema.index({ branchId: 1, orderId: 1 });
+
 const Order = mongoose.model('Order', orderSchema);
 
 export default Order;
